@@ -15,12 +15,13 @@ p {
 
 form {
   display: grid;
-  grid-template-columns: 60px 250px;
+  grid-template-columns: 80px 250px;
   grid-auto-rows: auto;
   grid-row-gap: 8px;
-  background-color: #382533;
-  width:310px;
+  background-color: #e7dff5;
+  width:330px;
   padding:10px;
+  margin-left: 2em;
   border-radius: 15px;
   box-shadow: 10px 9px 5px 0px rgba(0,0,0,0.45);
 
@@ -28,10 +29,16 @@ form {
 
 input {
   grid-column-start: 2;
+  padding:8px;
+  border-radius: 5px;
 }
 
 label {
   grid-column-start: 1;
+}
+
+label[for] {
+  grid-column-start: unset;
 }
 
 div {

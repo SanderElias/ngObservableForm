@@ -1,17 +1,68 @@
-<form (submit)='doSave($event)'>
+<form (submit)='doSave($event)' (observable)='assignForm($event)'>
+
   <label>Name</label>
   <input type="text" placeholder="type your name" name="name" minlength=2 required autofocus>
+
   <label>email</label>
   <input type="email" placeholder="type your email" name="email" minlength=5 required>
-  <label for="inpChocType">likes</label>
+
+  <label>Terms</label>
+  <input type="checkbox" name="terms">
+
+  <label>Contact</label>
+  <section>
+    <label for="contactChoice1">
+      <input type="radio" id="contactChoice1" name="contact" value="email"> Email</label>
+
+    <label for="contactChoice2">
+      <input type="radio" id="contactChoice2" name="contact" value="phone"> Phone</label>
+
+    <label for="contactChoice3">
+      <input type="radio" id="contactChoice3" name="contact" value="mail"> Mail</label>
+  </section>
+
+  <label>Volume</label>
+  <input type="range" name="volume">
+
+  <label>likes</label>
   <input type="text" list="chocType" placeholder="Favorite chocolade" name="favoredChoc">
   <datalist id="chocType">
     <option value="white">
     <option value="milk">
     <option value="dark">
   </datalist>
+
+  <label>Birthdate</label>
+  <input type="date" name="birth">
+
+  <label>Phone</label>
+  <input type="tel" name="phone">
+
   <label>Description</label>
   <textarea name="desc" cols="30" rows="10"></textarea>
+
+  <label>Option</label>
+  <select name='option'>
+    <optgroup label="Group 1">
+      <option>Option 1.1</option>
+    </optgroup>
+    <optgroup label="Group 2">
+      <option>Option 2.1</option>
+      <option>Option 2.2</option>
+    </optgroup>
+    <optgroup label="Group 3" disabled>
+      <option>Option 3.1</option>
+      <option>Option 3.2</option>
+      <option>Option 3.3</option>
+    </optgroup>
+  </select>
+
+  <label>weigth</label>
+  <input type="number" name="weigth">
+
+  <label>Done:</label>
+  <progress [value]="this.progress" max="100">{{this.progress}} %</progress>
+
   <div>
     <button type='submit'>Save</button>
     <button type='reset'>Cancel</button>

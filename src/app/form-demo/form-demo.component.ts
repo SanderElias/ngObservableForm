@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-form-demo',
@@ -6,7 +7,21 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./form-demo.component.css']
 })
 export class FormDemoComponent implements OnInit {
+  formData$: Observable<any>;
+  progress = 0;
   constructor() {}
+
+  assignForm(o: Observable<any>) {
+    this.formData$ = o;
+    console.log('hookup');
+    this.formData$.subscribe(data => {
+      this.progress =
+        Object.keys(data).length /
+        Object.values(data).filter(i => i !== undefined).length *
+        0.01;
+      console.log(this.progress, data);
+    });
+  }
 
   ngOnInit() {}
   doSave(ev: Event) {
@@ -20,6 +35,6 @@ export class FormDemoComponent implements OnInit {
         return obj;
       }, {});
 
-    console.log(data)
+    console.log(data);
   }
 }
