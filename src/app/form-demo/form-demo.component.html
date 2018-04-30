@@ -7,7 +7,7 @@
   <input type="email" placeholder="type your email" name="email" minlength=5 required>
 
   <label>Terms</label>
-  <input type="checkbox" name="terms">
+  <input type="checkbox" name="terms" required>
 
   <label>Contact</label>
   <section>
@@ -28,8 +28,8 @@
   <input type="text" list="chocType" placeholder="Favorite chocolade" name="favoredChoc">
   <datalist id="chocType">
     <option value="white">
-    <option value="milk">
-    <option value="dark">
+      <option value="milk">
+        <option value="dark">
   </datalist>
 
   <label>Birthdate</label>
@@ -68,3 +68,7 @@
     <button type='reset'>Cancel</button>
   </div>
 </form>
+
+<article>
+  <pre><code>{{formData$|async|json:tru}}</code></pre>
+</article>

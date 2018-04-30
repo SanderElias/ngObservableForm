@@ -6,7 +6,7 @@ import {
   Output,
   EventEmitter
 } from '@angular/core';
-import { combineLatest, Observable } from 'rxjs';
+import { combineLatest, Observable, merge } from 'rxjs';
 import { startWith, map } from 'rxjs/operators';
 import { InputNameDirective } from './input-name.directive';
 
@@ -27,19 +27,24 @@ export class ObservableFromDirective implements AfterViewInit {
     console.log('inputs', this.inputsCc, this.inputsVc);
     // this.inputsCc
     const res = this.inputsCc.reduce((all, el) => {
-      all[el.name] = el.value$.pipe(startWith(undefined));
+      if (all[el.name]) {
+        // multiple inputs with same name, probably radiobuttons,
+        // merge the results, so only the latest one will "surface"
+        all[el.name] = merge(all[el.name], el.value$);
+      } else {
+        all[el.name] = el.value$.pipe(startWith(undefined));
+      }
       return all;
     }, {});
 
-    this.formData$ =  combineLatest(Object.values(res))
-      .pipe(
-        map(results =>
-          Object.keys(res).reduce(
-            (t, key, i) => ({ ...t, [key]: results[i] }),
-            {}
-          )
+    this.formData$ = combineLatest(Object.values(res)).pipe(
+      map(results =>
+        Object.keys(res).reduce(
+          (t, key, i) => ({ ...t, [key]: results[i] }),
+          {}
         )
-      );
-      this.exposeForm.emit(this.formData$);
+      )
+    );
+    this.exposeForm.emit(this.formData$);
   }
 }

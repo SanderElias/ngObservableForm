@@ -16,9 +16,9 @@ export class FormDemoComponent implements OnInit {
     console.log('hookup');
     this.formData$.subscribe(data => {
       this.progress =
-        Object.keys(data).length /
         Object.values(data).filter(i => i !== undefined).length *
-        0.01;
+        (Object.keys(data).length / 100) *
+        100;
       console.log(this.progress, data);
     });
   }

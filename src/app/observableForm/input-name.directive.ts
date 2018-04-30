@@ -7,7 +7,7 @@ import {
 } from '@angular/core';
 
 import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { takeUntil, distinctUntilChanged } from 'rxjs/operators';
 
 @Directive({
   // tslint:disable-next-line:directive-selector
@@ -18,12 +18,21 @@ export class InputNameDirective implements OnDestroy {
   private valueSource = new Subject<any>();
   private elm: HTMLElement = this.elRef.nativeElement;
   @Input('type') type: string;
-  public value$ = this.valueSource.asObservable().pipe(takeUntil(this.destroy));
+  public value$ = this.valueSource
+    .asObservable()
+    .pipe(takeUntil(this.destroy), distinctUntilChanged());
 
+  @HostListener('change', ['$event'])
   @HostListener('input', ['$event'])
   private oninput(ev) {
-    // console.log('inp', ev.target.value);
-    console.log('type', this.type);
+    console.log(
+      'inp',
+      this.name,
+      this.type,
+      ev.target.value,
+      ev.target.checked
+    );
+    console.log('type');
     switch (this.type) {
       case 'date':
         this.valueSource.next(ev.target.valueAsDate);
