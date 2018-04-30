@@ -1,6 +1,0 @@
-
-
-toUrl(id) {
-  return id ?
-  
-}
