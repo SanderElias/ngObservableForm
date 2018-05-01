@@ -30,7 +30,7 @@ form {
 input {
   grid-column-start: 2;
   padding:8px;
-  border-radius: 5px;
+  border-radius: 8px;
 }
 
 label {
@@ -52,8 +52,11 @@ div {
 }
 
 button {
-  background-color: tan;
+  padding:8px;
+  border-radius: 10px;
+  background-color: rgb(40, 75, 92);
+  color:#fafafa
 }
-button[type=cancel] {
-  background-color: darkgoldenrod;
+button[type=reset] {
+  background-color: rgb(158, 79, 59);
 }
