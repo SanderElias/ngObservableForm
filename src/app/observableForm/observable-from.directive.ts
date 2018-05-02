@@ -4,7 +4,8 @@ import {
   Directive,
   ViewChildren,
   Output,
-  EventEmitter
+  EventEmitter,
+  HostListener
 } from '@angular/core';
 import { combineLatest, Observable, merge } from 'rxjs';
 import { startWith, map } from 'rxjs/operators';
@@ -21,10 +22,14 @@ export class ObservableFromDirective implements AfterViewInit {
   @Output('observable') exposeForm = new EventEmitter<Observable<any>>();
   formData$: Observable<any>;
 
+  @HostListener('reset') onreset() {
+    console.log('resetting form');
+    this.ngAfterViewInit();
+  }
   constructor() {}
 
   ngAfterViewInit() {
-    console.log('inputs', this.inputsCc, this.inputsVc);
+    // console.log('inputs', this.inputsCc, this.inputsVc);
     // this.inputsCc
     const res = this.inputsCc.reduce((all, el) => {
       if (all[el.name]) {

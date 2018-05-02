@@ -27,10 +27,13 @@ form {
 
 }
 
-input {
+input, textarea, options {
   grid-column-start: 2;
   padding:8px;
   border-radius: 8px;
+  background-color: rgb(238, 229, 240);
+  color:#07040c;
+  font-weight: 500;
 }
 
 label {
@@ -54,9 +57,9 @@ div {
 button {
   padding:8px;
   border-radius: 10px;
-  background-color: rgb(40, 75, 92);
+  background-color: #b28cf3;
   color:#fafafa
 }
 button[type=reset] {
-  background-color: rgb(158, 79, 59);
+  background-color: #c0a9e7;
 }
