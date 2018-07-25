@@ -17,7 +17,7 @@ export class FormDemoComponent implements OnInit {
     this.formData$.subscribe(data => {
       this.progress =
         Object.values(data).filter(i => i !== undefined).length /
-        Object.keys(data).length *100;
+        Object.keys(data).length * 100;
       console.log(this.progress, data);
     });
   }
