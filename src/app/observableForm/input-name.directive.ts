@@ -17,6 +17,7 @@ export class InputNameDirective implements OnDestroy {
   private destroy = new Subject<void>();
   private valueSource = new Subject<any>();
   private elm: HTMLElement = this.elRef.nativeElement;
+  // tslint:disable-next-line:no-input-rename
   @Input('type') type: string;
   public value$ = this.valueSource
     .asObservable()

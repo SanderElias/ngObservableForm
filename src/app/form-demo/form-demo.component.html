@@ -1,4 +1,4 @@
-<form (submit)='doSave($event)' (observable)='assignForm($event)'>
+<form (submit)='doSave($event)' (observable)='assignForm($event)' [fillForm]="sample">
 
   <label>Name</label>
   <input type="text" placeholder="type your name" name="name" minlength=2 required autofocus>
@@ -23,13 +23,18 @@
 
   <label>Volume</label>
   <input type="range" name="volume">
+  <datalist id='volume'>
+    <option value="0">0</option>
+    <option value="25">25</option>
+    <option value="50">50</option>
+  </datalist>
 
   <label>likes</label>
   <input type="text" list="chocType" placeholder="Favorite chocolade" name="favoredChoc">
   <datalist id="chocType">
-    <option value="white">
-      <option value="milk">
-        <option value="dark">
+    <option value="white"></option>
+    <option value="milk"></option>
+    <option value="dark"></option>
   </datalist>
 
   <label>Birthdate</label>
@@ -70,5 +75,5 @@
 </form>
 
 <article>
-  <pre><code>{{formData$|async|json:true}}</code></pre>
+  <!-- <pre><code>{{formData$|async|json:true}}</code></pre> -->
 </article>

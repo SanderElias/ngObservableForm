@@ -1,5 +1,6 @@
-> 0.5%
+> 2%
 last 2 versions
 Firefox ESR
 not dead
-IE 9-11
+no ie>0
+no ie_mob>0

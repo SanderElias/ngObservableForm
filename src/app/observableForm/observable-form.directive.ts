@@ -13,9 +13,10 @@ import { InputNameDirective } from './input-name.directive';
 
 @Directive({
   // tslint:disable-next-line:directive-selector
-  selector: 'form[observable]'
+  selector: 'form[observable]',
+  exportAs: 'observableForm'
 })
-export class ObservableFromDirective implements AfterViewInit {
+export class ObservableFormDirective implements AfterViewInit {
   @ViewChildren(InputNameDirective) private inputsVc;
   @ContentChildren(InputNameDirective) private inputsCc;
   // tslint:disable-next-line:no-output-rename
