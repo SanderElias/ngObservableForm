@@ -4,7 +4,8 @@ import {
   Optional,
   Host,
   ElementRef,
-  OnInit
+  OnInit,
+  isDevMode
 } from '@angular/core';
 
 @Directive({
@@ -21,7 +22,6 @@ export class FillFormDirective implements OnInit {
   ) {}
 
   ngOnInit() {
-    console.log('ffd', this.fillForm, this.form);
     [...Object.entries(this.fillForm)].forEach(this.fillEntry.bind(this));
   }
 
@@ -29,17 +29,19 @@ export class FillFormDirective implements OnInit {
     const form: HTMLFormElement = this.form.nativeElement;
     if (form === undefined) {
       // no form, nothing to do!
+      // tslint:disable-next-line:no-unused-expression
+      isDevMode() &&
+        console.warn('tyring to fill a form on a non-form element?');
       return;
     }
     const target = form[key];
-    console.log(key, target.type);
     if (target === undefined) {
       // no corrospodending field in form. ignore
       return;
     }
     if (target.type === 'checkbox') {
       if (!!val) {
-        // ok, we have a true value, check!
+        // ok, we have a true-like value, set check!
         target['checked'] = true;
       }
       return;
@@ -54,7 +56,7 @@ export class FillFormDirective implements OnInit {
           date.getMonth() +
           1 +
           ''
-        ).padStart(2, 0)}-${date.getDate()}`;
+        ).padStart(2, '0')}-${date.getDate()}`;
         target.value = newValue;
         console.log(target.value, newValue);
         return;
@@ -62,7 +64,7 @@ export class FillFormDirective implements OnInit {
       // if it's not a Date, let it fall through to the normal assignment, doesn't hurt.
     }
 
-    // suprisingly, this works for most of the types without anything fancy.
+    // surprissingly, this works for most of the types without anything fancy.
     // I was surprised it worked for radio-groups
     target.value = val;
   }
