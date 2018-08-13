@@ -64,7 +64,7 @@ export class FillFormDirective implements OnInit {
       // if it's not a Date, let it fall through to the normal assignment, doesn't hurt.
     }
 
-    // surprissingly, this works for most of the types without anything fancy.
+    // surprisingly, this works for most of the types without anything fancy.
     // I was surprised it worked for radio-groups
     target.value = val;
   }
