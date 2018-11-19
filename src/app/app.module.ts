@@ -1,4 +1,4 @@
-import { BrowserModule } from '@angular/platform-browser';
+// import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 
 import { AppComponent } from './app.component';
@@ -16,7 +16,7 @@ import { FillFormDirective } from './observableForm/fill-form.directive';
     FillFormDirective
   ],
   imports: [
-    BrowserModule
+    // BrowserModule
   ],
   providers: [],
   bootstrap: [AppComponent]

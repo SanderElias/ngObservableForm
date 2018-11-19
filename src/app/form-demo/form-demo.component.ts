@@ -1,6 +1,12 @@
-import { AfterContentChecked, Component, OnInit, ViewChild } from '@angular/core';
-import { Observable } from 'rxjs';
+import {
+  AfterContentChecked,
+  Component,
+  OnInit,
+  ViewChild
+} from '@angular/core';
+import { Observable, Subject } from 'rxjs';
 import { ObservableFormDirective } from '../observableForm/observable-form.directive';
+import { switchMap } from 'rxjs/operators';
 
 const sampleData = {
   name: 'Sander Elias',
@@ -13,7 +19,7 @@ const sampleData = {
   phone: '624771946',
   desc: 'Blah\n\nBlah\nDont know.',
   option: 'Option 2.2',
-  weigth: 88
+  weight: 88
 };
 
 @Component({
@@ -21,35 +27,34 @@ const sampleData = {
   templateUrl: './form-demo.component.html',
   styleUrls: ['./form-demo.component.css']
 })
-export class FormDemoComponent implements OnInit, AfterContentChecked {
-  formData$: Observable<any>;
+export class FormDemoComponent implements OnInit {
   progress = 0;
+  init$ = new Subject<void>();
   sample = sampleData;
-  @ViewChild('observableForm')
+  @ViewChild(ObservableFormDirective)
   myForm: ObservableFormDirective;
+  formData$ = this.init$.pipe(
+    switchMap(() => this.myForm.formData$)
+  );
+
+  formSub = this.formData$.subscribe(data => {
+    this.progress =
+      (Object.values(data).filter(i => i !== undefined).length /
+        Object.keys(data).length) *
+      100;
+    console.log(this.progress, data);
+  });
+
   constructor() {}
 
   assignForm(o: Observable<any>) {
-    this.formData$ = o;
-    console.log('hookup');
-    this.formData$.subscribe(data => {
-      this.progress =
-        (Object.values(data).filter(i => i !== undefined).length /
-          Object.keys(data).length) *
-        100;
-      console.log(this.progress, data);
-    });
+    // this.formData$ = o;
   }
 
   ngOnInit() {
-    console.log('myForm', this.myForm);
+    this.init$.next();
   }
 
-  ngAfterContentChecked() {
-    //Called after every check of the component's or directive's content.
-    console.log('myForm', this.myForm);
-    //Add 'implements AfterContentChecked' to the class.
-  }
   doSave(ev: Event) {
     ev.preventDefault();
     const form: HTMLFormElement = <any>ev.target;

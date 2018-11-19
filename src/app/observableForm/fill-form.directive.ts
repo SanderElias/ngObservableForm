@@ -19,9 +19,12 @@ export class FillFormDirective implements OnInit {
     @Optional()
     @Host()
     private form: ElementRef
-  ) {}
+  ) {
+    console.log(this)
+  }
 
   ngOnInit() {
+    console.log(this.form);
     [...Object.entries(this.fillForm)].forEach(this.fillEntry.bind(this));
   }
 
@@ -34,7 +37,7 @@ export class FillFormDirective implements OnInit {
         console.warn('tyring to fill a form on a non-form element?');
       return;
     }
-    const target = form[key];
+    const target = form[key] as HTMLFormElement;
     if (target === undefined) {
       // no corrospodending field in form. ignore
       return;

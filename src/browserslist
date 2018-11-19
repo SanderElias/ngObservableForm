@@ -1,6 +1,3 @@
-> 2%
 last 2 versions
-Firefox ESR
-not dead
-no ie>0
-no ie_mob>0
+not < 2%
+not IE > 0

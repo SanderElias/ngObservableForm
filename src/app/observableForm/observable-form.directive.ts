@@ -2,13 +2,13 @@ import {
   AfterViewInit,
   ContentChildren,
   Directive,
-  ViewChildren,
-  Output,
   EventEmitter,
-  HostListener
+  OnDestroy,
+  HostListener,
+  Output
 } from '@angular/core';
-import { combineLatest, Observable, merge } from 'rxjs';
-import { startWith, map } from 'rxjs/operators';
+import { combineLatest, merge, Observable, Subject } from 'rxjs';
+import { map, startWith, switchMap, delay } from 'rxjs/operators';
 import { InputNameDirective } from './input-name.directive';
 
 @Directive({
@@ -16,23 +16,46 @@ import { InputNameDirective } from './input-name.directive';
   selector: 'form[observable]',
   exportAs: 'observableForm'
 })
-export class ObservableFormDirective implements AfterViewInit {
-  @ViewChildren(InputNameDirective) private inputsVc;
+export class ObservableFormDirective implements AfterViewInit, OnDestroy {
+  private afterView$ = new Subject<void>();
   @ContentChildren(InputNameDirective) private inputsCc;
   // tslint:disable-next-line:no-output-rename
   @Output('observable') exposeForm = new EventEmitter<Observable<any>>();
-  formData$: Observable<any>;
+  formData$: Observable<any> = this.afterView$.pipe(
+    map(() => this.gatherFormObservables()),
+    switchMap(formObservables =>
+      combineLatest(Object.values(formObservables)).pipe(
+        map(results =>
+          Object.keys(formObservables).reduce(
+            (t, key, i) => ({ ...t, [key]: results[i] }),
+            {}
+          )
+        )
+      )
+    )
+  );
 
-  @HostListener('reset') onreset() {
-    console.log('resetting form');
-    this.ngAfterViewInit();
+  initSub = this.afterView$
+    .pipe(delay(500)) // delay it a bit so the form can "settle"
+    .subscribe(() => this.exposeForm.emit(this.formData$));
+
+  @HostListener('reset')
+  onreset() {
+    this.afterView$.next();
   }
+
   constructor() {}
 
   ngAfterViewInit() {
-    // console.log('inputs', this.inputsCc, this.inputsVc);
-    // this.inputsCc
-    const res = this.inputsCc.reduce((all, el) => {
+    this.afterView$.next();
+  }
+
+  ngOnDestroy(): void {
+    this.initSub.unsubscribe();
+  }
+
+  private gatherFormObservables() {
+    return this.inputsCc.reduce((all, el) => {
       if (all[el.name]) {
         // multiple inputs with same name, probably radiobuttons,
         // merge the results, so only the latest one will "surface"
@@ -42,15 +65,5 @@ export class ObservableFormDirective implements AfterViewInit {
       }
       return all;
     }, {});
-
-    this.formData$ = combineLatest(Object.values(res)).pipe(
-      map(results =>
-        Object.keys(res).reduce(
-          (t, key, i) => ({ ...t, [key]: results[i] }),
-          {}
-        )
-      )
-    );
-    this.exposeForm.emit(this.formData$);
   }
 }

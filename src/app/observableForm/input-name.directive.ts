@@ -16,12 +16,14 @@ import { takeUntil, distinctUntilChanged } from 'rxjs/operators';
 export class InputNameDirective implements OnDestroy {
   private destroy = new Subject<void>();
   private valueSource = new Subject<any>();
-  private elm: HTMLElement = this.elRef.nativeElement;
+  // private elm = this.elRef.nativeElement;
+  @Input() name: string;
   // tslint:disable-next-line:no-input-rename
   @Input('type') type: string;
-  public value$ = this.valueSource
-    .asObservable()
-    .pipe(takeUntil(this.destroy), distinctUntilChanged());
+  public value$ = this.valueSource.asObservable().pipe(
+    takeUntil(this.destroy),
+    distinctUntilChanged()
+  );
 
   @HostListener('change', ['$event'])
   @HostListener('input', ['$event'])
@@ -33,7 +35,6 @@ export class InputNameDirective implements OnDestroy {
       ev.target.value,
       ev.target.checked
     );
-    console.log('type');
     switch (this.type) {
       case 'date':
         this.valueSource.next(ev.target.valueAsDate);
@@ -48,11 +49,11 @@ export class InputNameDirective implements OnDestroy {
         this.valueSource.next(ev.target.value);
     }
   }
-  get name() {
-    return this.elm.getAttribute('name');
-  }
+  // get name() {
+  //   return this.elm.getAttribute('name');
+  // }
 
-  constructor(private elRef: ElementRef) {}
+  constructor() {}
 
   ngOnDestroy() {
     this.destroy.next();
