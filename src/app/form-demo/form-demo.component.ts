@@ -2,7 +2,8 @@ import {
   AfterContentChecked,
   Component,
   OnInit,
-  ViewChild
+  ViewChild,
+  ViewEncapsulation
 } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import { ObservableFormDirective } from '../observableForm/observable-form.directive';
@@ -25,7 +26,8 @@ const sampleData = {
 @Component({
   selector: 'app-form-demo',
   templateUrl: './form-demo.component.html',
-  styleUrls: ['./form-demo.component.css']
+  styleUrls: ['./form-demo.component.css'],
+  encapsulation: ViewEncapsulation.None
 })
 export class FormDemoComponent implements OnInit {
   progress = 0;

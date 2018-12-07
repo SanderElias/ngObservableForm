@@ -21,6 +21,7 @@ export class ObservableFormDirective implements AfterViewInit, OnDestroy {
   @ContentChildren(InputNameDirective) private inputsCc;
   // tslint:disable-next-line:no-output-rename
   @Output('observable') exposeForm = new EventEmitter<Observable<any>>();
+
   formData$: Observable<any> = this.afterView$.pipe(
     map(() => this.gatherFormObservables()),
     switchMap(formObservables =>
