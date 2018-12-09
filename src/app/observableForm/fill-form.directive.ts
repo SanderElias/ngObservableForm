@@ -34,7 +34,7 @@ export class FillFormDirective implements OnInit {
         console.warn('tyring to fill a form on a non-form element?');
       return;
     }
-    const target = form[key];
+    const target = form[key] as HTMLFormElement;
     if (target === undefined) {
       // no corrospodending field in form. ignore
       return;

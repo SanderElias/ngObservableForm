@@ -1,5 +1,6 @@
 <form (submit)='doSave($event)' (observable)='assignForm($event)' [fillForm]="sample">
 
+   <!-- <input type="text" [value]="'somestring'" (input)="handleIt($event.target.value">  -->
   <label>Name</label>
   <input type="text" placeholder="type your name" name="name" minlength=2 required autofocus>
 
