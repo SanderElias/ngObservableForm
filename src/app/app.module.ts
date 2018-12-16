@@ -9,6 +9,7 @@ import { FillFormDirective } from './observableForm/fill-form.directive';
 
 @NgModule({
   declarations: [
+
     AppComponent,
     FormDemoComponent,
     InputNameDirective,
@@ -22,3 +23,4 @@ import { FillFormDirective } from './observableForm/fill-form.directive';
   bootstrap: [AppComponent]
 })
 export class AppModule { }
+

@@ -3,11 +3,12 @@ import {
   Component,
   OnInit,
   ViewChild,
-  ViewEncapsulation
+  ViewEncapsulation,
+  AfterContentInit
 } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import { ObservableFormDirective } from '../observableForm/observable-form.directive';
-import { switchMap } from 'rxjs/operators';
+import { switchMap, tap } from 'rxjs/operators';
 
 const sampleData = {
   name: 'Sander Elias',
@@ -29,14 +30,15 @@ const sampleData = {
   styleUrls: ['./form-demo.component.css'],
   encapsulation: ViewEncapsulation.None
 })
-export class FormDemoComponent implements OnInit {
+export class FormDemoComponent implements OnInit, AfterContentInit {
   progress = 0;
   init$ = new Subject<void>();
   sample = sampleData;
-  @ViewChild(ObservableFormDirective)
-  myForm: ObservableFormDirective;
+  @ViewChild(ObservableFormDirective) myForm: ObservableFormDirective;
   formData$ = this.init$.pipe(
-    switchMap(() => this.myForm.formData$)
+    tap(fd => console.log('init', this.myForm)),
+    switchMap(() => this.myForm.formData$),
+    tap(fd => console.log('fd', fd))
   );
 
   formSub = this.formData$.subscribe(data => {
@@ -54,18 +56,22 @@ export class FormDemoComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.init$.next();
+    // this.init$.next();
+  }
+  ngAfterContentInit() {
+    setTimeout(() => this.init$.next(), 250);
   }
 
   doSave(ev: Event) {
     ev.preventDefault();
     const form: HTMLFormElement = <any>ev.target;
 
-    const data = Array.from(form.children)
+    const nativeFormData = Array.from(form.children)
       .filter((e: HTMLInputElement) => e.name)
       .reduce((obj, e: HTMLInputElement) => {
         obj[e.name] = e.value;
         return obj;
       }, {});
+    console.log(nativeFormData);
   }
 }

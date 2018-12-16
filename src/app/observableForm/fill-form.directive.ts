@@ -37,7 +37,7 @@ export class FillFormDirective
     first(),
     tap(r => console.log('after', r)),
     // map<void, any[]>(() => this.inputsCc.map(e => e)),
-    map(() => getHostElement(this) as HTMLFormElement),
+    map(() => ng.getHostElement(this) as HTMLFormElement),
     tap(r => (this.form = r)),
     tap(() => {
       this.updateForm();
@@ -47,7 +47,7 @@ export class FillFormDirective
   // no need to unsubscribe, as I'm using 'first' and it will run to completion.
   private formSub = this.formFiller$.subscribe();
 
-  constructor(private gh: ) {
+  constructor() {
     // console.log(this.constructor)
   }
 
@@ -115,9 +115,4 @@ export class FillFormDirective
     // Called once, before the instance is destroyed.
     this.destroy$.next();
   }
-}
-
-class destObs implements OnDestroy {
-  destroy$ = new Subject<void>();
-  ngOnDestroy() {this.destroy$.next()}
 }

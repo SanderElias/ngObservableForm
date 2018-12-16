@@ -64,6 +64,7 @@ export class ObservableFormDirective implements AfterViewInit, OnDestroy {
       } else {
         all[el.name] = el.value$.pipe(startWith(undefined));
       }
+      console.log('all', all);
       return all;
     }, {});
   }
