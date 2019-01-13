@@ -5,7 +5,8 @@ import {
   Input,
   isDevMode,
   OnDestroy,
-  OnInit
+  OnInit,
+  HostListener
 } from '@angular/core';
 import { Subject } from 'rxjs';
 import { first, map, tap } from 'rxjs/operators';
@@ -43,6 +44,17 @@ export class FillFormDirective
     // console.log(this.constructor)
   }
 
+  /** reset the form */
+  @HostListener('reset', ['$event'])
+  private resetForn(ev) {
+    /**
+     * the timout is needed to make sure the form is
+     * filled after the DOM event cleared it.
+     */
+    setTimeout(() => this.updateForm(), 5);
+  }
+
+  /** update the form  with the current entries */
   private updateForm() {
     // for now this is ran just one, afer init.
     // I might add diffing later on, so we can update the form's values from the source.
@@ -58,7 +70,8 @@ export class FillFormDirective
     this.after$.next();
   }
 
-  fillEntry([key, val], index, arr) {
+  /** Helper to fill a single entry */
+  private fillEntry([key, val], index, arr) {
     // const form: HTMLFormElement = <any>{}; //this.form.nativeElement;
     const form = this.form;
     if (form === undefined) {

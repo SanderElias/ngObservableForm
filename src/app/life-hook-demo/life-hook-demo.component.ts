@@ -35,7 +35,7 @@ export const onInit = <T extends Constructor>(base: T = class {} as T)  =>
   selector: 'app-life-hook-demo',
   template: `
     <ul>
-      <li *ngFor="let item of (showHook$ | async)">{{ item }}</li>
+      <li *ngFor="let item of showHook$ | async">{{ item }}</li>
     </ul>
   `,
   styleUrls: ['./life-hook-demo.component.css']
@@ -44,7 +44,7 @@ export class LifeHookDemoComponent extends onDestroy(onInit()) {
   @LifeCycleHook('onInit') init$: Observable<void>;
   @LifeCycleHook('afterViewInit') av$: Observable<void>;
 
-  showHooks$ = combineLatest([this. , this.av$]).pipe(
+  showHooks$ = combineLatest([this.init$ , this.av$]).pipe(
     map(([init]) => ['Init hook fired', 'After view hook fired']),
     takeUntil(this.destroy$)
   );
