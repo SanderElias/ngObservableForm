@@ -1,22 +1,14 @@
 import {
+  AfterContentInit,
+  AfterViewInit,
   Directive,
   Input,
-  Optional,
-  Host,
-  ElementRef,
-  OnInit,
   isDevMode,
-  AfterContentInit,
-  ContentChildren,
-  QueryList,
-  AfterViewInit,
-  OnDestroy
+  OnDestroy,
+  OnInit
 } from '@angular/core';
 import { Subject } from 'rxjs';
-import { InputNameDirective } from './input-name.directive';
-import { switchMap, tap, map, takeUntil, first } from 'rxjs/operators';
-import { MONKEY_PATCH_KEY_NAME } from '@angular/core/src/render3/interfaces/context';
-import { getHostElement } from '@angular/core/src/render3';
+import { first, map, tap } from 'rxjs/operators';
 
 declare var ng: any;
 
@@ -41,7 +33,7 @@ export class FillFormDirective
     tap(r => (this.form = r)),
     tap(() => {
       this.updateForm();
-    }),
+    })
   );
 
   // no need to unsubscribe, as I'm using 'first' and it will run to completion.
@@ -57,13 +49,12 @@ export class FillFormDirective
     [...Object.entries(this.fillForm)].forEach(this.fillEntry.bind(this));
   }
 
-  ngOnInit() {
-  }
+  ngOnInit() {}
 
   ngAfterViewInit() {
     this.after$.next();
   }
-  ngAfterContentInit(): void {
+  ngAfterContentInit() {
     this.after$.next();
   }
 

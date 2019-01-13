@@ -1,13 +1,7 @@
-import {
-  Directive,
-  HostListener,
-  OnDestroy,
-  ElementRef,
-  Input
-} from '@angular/core';
-
+import { Directive, HostListener, Input, OnDestroy } from '@angular/core';
 import { Subject } from 'rxjs';
-import { takeUntil, distinctUntilChanged } from 'rxjs/operators';
+import { distinctUntilChanged, takeUntil } from 'rxjs/operators';
+
 
 @Directive({
   // tslint:disable-next-line:directive-selector
@@ -16,7 +10,7 @@ import { takeUntil, distinctUntilChanged } from 'rxjs/operators';
 export class InputNameDirective implements OnDestroy {
   private destroy = new Subject<void>();
   private valueSource = new Subject<any>();
-  // private elm = this.elRef.nativeElement;
+  // private elm = this.elRef.nativeElement;O
   @Input() name: string;
   // tslint:disable-next-line:no-input-rename
   @Input('type') type: string;
@@ -28,13 +22,13 @@ export class InputNameDirective implements OnDestroy {
   @HostListener('change', ['$event'])
   @HostListener('input', ['$event'])
   private oninput(ev) {
-    console.log(
-      'inp',
-      this.name,
-      this.type,
-      ev.target.value,
-      ev.target.checked
-    );
+    // console.log(
+    //   'inp',
+    //   this.name,
+    //   this.type,
+    //   ev.target.value,
+    //   ev.target.checked
+    // );
     switch (this.type) {
       case 'date':
         this.valueSource.next(ev.target.valueAsDate);
@@ -49,9 +43,6 @@ export class InputNameDirective implements OnDestroy {
         this.valueSource.next(ev.target.value);
     }
   }
-  // get name() {
-  //   return this.elm.getAttribute('name');
-  // }
 
   constructor() {}
 

@@ -1,14 +1,15 @@
 import {
+  AfterContentInit,
   AfterViewInit,
   ContentChildren,
   Directive,
   EventEmitter,
-  OnDestroy,
   HostListener,
+  OnDestroy,
   Output
 } from '@angular/core';
-import { combineLatest, merge, Observable, Subject } from 'rxjs';
-import { map, startWith, switchMap, delay } from 'rxjs/operators';
+import { combineLatest, merge, Observable, ReplaySubject } from 'rxjs';
+import { debounceTime, delay, map, startWith, switchMap, throttleTime } from 'rxjs/operators';
 import { InputNameDirective } from './input-name.directive';
 
 @Directive({
@@ -16,13 +17,15 @@ import { InputNameDirective } from './input-name.directive';
   selector: 'form[observable]',
   exportAs: 'observableForm'
 })
-export class ObservableFormDirective implements AfterViewInit, OnDestroy {
-  private afterView$ = new Subject<void>();
+export class ObservableFormDirective
+  implements AfterViewInit, AfterContentInit, OnDestroy {
+  private init$ = new ReplaySubject<void>(1);
   @ContentChildren(InputNameDirective) private inputsCc;
   // tslint:disable-next-line:no-output-rename
   @Output('observable') exposeForm = new EventEmitter<Observable<any>>();
 
-  formData$: Observable<any> = this.afterView$.pipe(
+  formData$: Observable<any> = this.init$.pipe(
+    throttleTime(100), // make sure it doesn't refire to rapidly
     map(() => this.gatherFormObservables()),
     switchMap(formObservables =>
       combineLatest(Object.values(formObservables)).pipe(
@@ -36,19 +39,23 @@ export class ObservableFormDirective implements AfterViewInit, OnDestroy {
     )
   );
 
-  initSub = this.afterView$
-    .pipe(delay(500)) // delay it a bit so the form can "settle"
+  initSub = this.init$
+    // .pipe(delay(250)) // delay it a bit so the form can "settle"
     .subscribe(() => this.exposeForm.emit(this.formData$));
 
   @HostListener('reset')
   onreset() {
-    this.afterView$.next();
+    this.init$.next();
   }
 
   constructor() {}
 
+  ngAfterContentInit() {
+    this.init$.next();
+  }
+
   ngAfterViewInit() {
-    this.afterView$.next();
+    this.init$.next();
   }
 
   ngOnDestroy(): void {

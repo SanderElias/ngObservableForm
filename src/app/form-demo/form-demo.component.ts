@@ -1,14 +1,8 @@
-import {
-  AfterContentChecked,
-  Component,
-  OnInit,
-  ViewChild,
-  ViewEncapsulation,
-  AfterContentInit
-} from '@angular/core';
-import { Observable, Subject } from 'rxjs';
+import { Component, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Observable } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 import { ObservableFormDirective } from '../observableForm/observable-form.directive';
-import { switchMap, tap } from 'rxjs/operators';
+import { LifeCycleHook } from './lifeHook';
 
 const sampleData = {
   name: 'Sander Elias',
@@ -30,15 +24,17 @@ const sampleData = {
   styleUrls: ['./form-demo.component.css'],
   encapsulation: ViewEncapsulation.None
 })
-export class FormDemoComponent implements OnInit, AfterContentInit {
+export class FormDemoComponent {
+  @LifeCycleHook('afterContentInit') initView$: Observable<void>;
+  @LifeCycleHook('onInit') onInitView$: Observable<void>;
+  @LifeCycleHook('onDestroy') onDestroy$: Observable<void>;
+
   progress = 0;
-  init$ = new Subject<void>();
   sample = sampleData;
   @ViewChild(ObservableFormDirective) myForm: ObservableFormDirective;
-  formData$ = this.init$.pipe(
-    tap(fd => console.log('init', this.myForm)),
-    switchMap(() => this.myForm.formData$),
-    tap(fd => console.log('fd', fd))
+  formData$ = this.initView$.pipe(
+    switchMap(() => this.myForm.formData$)
+    // tap(fd => console.log('fd', fd))
   );
 
   formSub = this.formData$.subscribe(data => {
@@ -46,20 +42,14 @@ export class FormDemoComponent implements OnInit, AfterContentInit {
       (Object.values(data).filter(i => i !== undefined).length /
         Object.keys(data).length) *
       100;
-    console.log(this.progress, data);
   });
 
-  constructor() {}
+  constructor() {
+    console.log(this);
+  }
 
   assignForm(o: Observable<any>) {
     // this.formData$ = o;
-  }
-
-  ngOnInit() {
-    // this.init$.next();
-  }
-  ngAfterContentInit() {
-    setTimeout(() => this.init$.next(), 250);
   }
 
   doSave(ev: Event) {
