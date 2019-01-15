@@ -1,6 +1,6 @@
 import { Component, ViewChild, ViewEncapsulation } from '@angular/core';
 import { Observable } from 'rxjs';
-import { switchMap, tap, shareReplay, first } from 'rxjs/operators';
+import { switchMap, tap, shareReplay, first, take } from 'rxjs/operators';
 import { ObservableFormDirective } from '../observableForm/observable-form.directive';
 import { LifeCycleHook } from './lifeHook';
 
@@ -31,29 +31,34 @@ export class FormDemoComponent {
 
   progress = 0;
   sample = sampleData;
+  updates = {};
   @ViewChild(ObservableFormDirective) myForm: ObservableFormDirective;
   formData$ = this.initView$.pipe(
     switchMap(() => this.myForm.formData$),
-    tap(fd => console.log('fd', fd)),
+    tap(data => (this.updates = data))
   );
 
   formSub = this.formData$.subscribe(data => {
+    console.log('data from form', data);
     this.progress =
       (Object.values(data).filter(i => i !== undefined).length /
         Object.keys(data).length) *
       100;
+    console.log(this.progress);
   });
 
   constructor() {}
 
-  assignForm(o: Observable<any>) {
-    // this.formData$ = o;
+  doSave(ev: Event) {
+    ev.preventDefault();
+
+    const changes = Object.entries(this.updates)
+      .filter(([key, val]) => val)
+      .reduce((r, [key, val]) => ({ ...r, [key]: val }), {});
+
+    console.log('formData', changes);
   }
 
-  async doSave(ev: Event) {
-    console.log('saving?')
-    ev.preventDefault();
-    const formData = await this.formData$.pipe(first()).toPromise().catch(() => ({}));
-    console.log('formData', formData);
-  }
+
 }
+

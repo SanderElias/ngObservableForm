@@ -34,7 +34,7 @@ export class ObservableFormDirective
    */
   @ContentChildren(InputNameDirective, { descendants: true }) private inputsCc;
   // tslint:disable-next-line:no-output-rename
-  @Output('observable') exposeForm = new EventEmitter<Observable<any>>();
+  @Output('observable') private exposeForm = new EventEmitter<Observable<any>>();
 
   formData$: Observable<any> = this.init$.pipe(
     throttleTime(100), // make sure it doesn't refire to rapidly
@@ -43,6 +43,7 @@ export class ObservableFormDirective
     switchMap(formObservables =>
       /** make it update on every input firing off */
       combineLatest(Object.values(formObservables)).pipe(
+        /** the result is an array */
         map(results =>
           /** reduce it back to a json-like data structure */
           Object.keys(formObservables).reduce(
