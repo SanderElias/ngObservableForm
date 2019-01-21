@@ -1,8 +1,12 @@
-import { Observable, Subject, concat, of } from 'rxjs';
-import { Component } from '@angular/compiler/src/core';
 import { ComponentDef } from '@angular/core/src/render3';
-import { first, switchMap } from 'rxjs/operators';
+import { concat, Observable, of, Subject } from 'rxjs';
+// import { ComponentDef, getHostElement } from '@angular/core/src/render3';
+import { first, switchMap, tap } from 'rxjs/operators';
+import { ObservableFormDirective } from '../observableForm/observable-form.directive';
+import { ɵmarkDirty, ɵdetectChanges } from '@angular/core';
 export const MONKEY_PATCH_KEY_NAME = '__ngContext__';
+
+declare var ng: any;
 
 const AvailableHooks = Symbol('seHooks');
 interface AvailableHooks {
@@ -16,7 +20,7 @@ interface AvailableHooks {
  * @param ref Name of the hook
  */
 export function LifeCycleHook(ref: keyof AvailableHooks): Function {
-  console.log('this', this);
+  // console.log('this', this);
   return function(
     target: ComponentDef<any>,
     propertyKey: string,
@@ -60,7 +64,7 @@ function getHookObservable(
   return hookList[ref].asObservable().pipe(first());
 }
 
-function FetchFormObservable(name) {
+export function FetchFormObservable(name?: string): Function {
   return function(
     target: ComponentDef<any>,
     propertyKey: string,
@@ -68,9 +72,34 @@ function FetchFormObservable(name) {
   ): Observable<void> {
     const content$ = getHookObservable(target, 'afterContentInit');
     const view$ = getHookObservable(target, 'afterViewInit');
+    const cdef: ComponentDef<any> = target.constructor['ngComponentDef'];
+    const selector = `form[observable${
+      typeof name === 'string' ? '=' + name.trim() : ''
+    }]`;
+    // window['cdef'] = cdef;
+
     target[propertyKey] = concat(content$, view$).pipe(
       /** switch to the actual 'deal */
-      switchMap(() => of('init done'))
+      switchMap(() => {
+        /** init done, DOM is ready */
+        /**
+         *  for now, cheat, as iy isn't yet exposing all I need
+         *  use plain DOM tricks to find the elements node, and then
+         * use the not yet properly exposed getDirectives to get my formDirective
+         */
+        const form = document.querySelector(selector);
+        const observableForm: ObservableFormDirective = ng
+          .getDirectives(form)
+          .find(i => i instanceof ObservableFormDirective);
+        if (observableForm) {
+          // return observableForm.formData$; // .pipe(tap(data => ɵmarkDirty(target)));
+          return observableForm.formData$.pipe(
+            tap(data => ɵdetectChanges(target))
+          );
+        }
+
+        return of(undefined);
+      })
     );
     return target[propertyKey];
   };

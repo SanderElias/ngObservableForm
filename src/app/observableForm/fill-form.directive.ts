@@ -6,7 +6,8 @@ import {
   isDevMode,
   OnDestroy,
   OnInit,
-  HostListener
+  HostListener,
+  ɵgetHostElement
 } from '@angular/core';
 import { Subject } from 'rxjs';
 import { first, map, tap } from 'rxjs/operators';
@@ -30,7 +31,7 @@ export class FillFormDirective
     first(),
     tap(r => console.log('after', r)),
     // map<void, any[]>(() => this.inputsCc.map(e => e)),
-    map(() => ng.getHostElement(this) as HTMLFormElement),
+    map(() => ɵgetHostElement(this) as HTMLFormElement),
     tap(r => (this.form = r)),
     tap(() => {
       this.updateForm();
