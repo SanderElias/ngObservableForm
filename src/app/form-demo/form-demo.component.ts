@@ -1,7 +1,8 @@
-import { Component, ViewEncapsulation } from '@angular/core';
+import { Component, ViewEncapsulation, ContentChildren } from '@angular/core';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
-import { FetchFormObservable } from './lifeHook';
+import { FetchFormObservable } from './FetchFormObservable';
+import { ObservableFormDirective } from '../observableForm/observable-form.directive';
 
 const sampleData = {
   name: 'Sander Elias',
@@ -26,22 +27,27 @@ const sampleData = {
 export class FormDemoComponent {
   @FetchFormObservable() formData$: Observable<any>;
 
-  progress = 0;
+  @ContentChildren(ObservableFormDirective) ObservableForms;
+
+  changedRatio = 0;
   sample = sampleData;
   updates = {};
 
   formSub = this.formData$
-    .pipe(tap(data => console.table(data)))
-    .subscribe(data => {
-      console.log('data from form', data);
-      this.progress = Math.ceil(
-        (Object.values(data).filter(i => i !== undefined).length /
-          Object.keys(data).length) *
-          100
-      );
-      console.log(this.progress);
-      // this.cdr.markForCheck();
-    });
+    .pipe(
+      /** assign data to local properie for easy access */
+      tap(data => (this.updates = data)),
+      /** silly sample, calculate the change rate */
+      tap(
+        data =>
+          (this.changedRatio = Math.ceil(
+            (Object.values(data).filter(i => i !== undefined).length /
+              Object.keys(data).length) *
+              100
+          ))
+      )
+    )
+    .subscribe();
 
   constructor() {}
 

@@ -1,38 +1,38 @@
-<form (submit)='doSave()' observable [fillForm]="sample">
+<!-- <article *ngIf="data"> -->
+  <form (submit)="doSave()" observable [fillForm]="data$ | async">
+    <label>Name</label>
+    <input
+      type="text"
+      placeholder="type your name"
+      name="name"
+      minlength="2"
+      required
+      autofocus
+    />
 
-  <label>Name</label>
-  <input type="text" placeholder="type your name" name="name" minlength=2 required autofocus>
+    <label>Eye color</label>
+    <input type="text" placeholder="type your eye color" name="eye_color" />
 
-  <label>email</label>
-  <input type="email" placeholder="type your email" name="email" minlength=5 required>
+    <label>Gender</label>
+    <section>
+      <label for="contactChoice1">
+        <input type="radio" id="contactChoice1" name="contact" value="female" />
+        Female</label
+      >
 
-  <label>Terms</label>
-  <input type="checkbox" name="terms" required>
+      <label for="contactChoice2">
+        <input type="radio" id="contactChoice2" name="contact" value="male" />
+        Male</label
+      >
 
-  <label>Contact</label>
-  <section>
-    <label for="contactChoice1">
-      <input type="radio" id="contactChoice1" name="contact" value="email"> Email</label>
+      <label for="contactChoice3">
+        <input type="radio" id="contactChoice3" name="contact" value="n/a" />
+        NA</label
+      >
+    </section>
+  </form>
+<!-- </article> -->
 
-    <label for="contactChoice2">
-      <input type="radio" id="contactChoice2" name="contact" value="phone"> Phone</label>
-
-    <label for="contactChoice3">
-      <input type="radio" id="contactChoice3" name="contact" value="mail"> Mail</label>
-  </section>
-
-  <label>Birthday</label>
-  <input type="date" name="birth">
-
-  <label>Description</label>
-  <textarea name="desc" cols="30" rows="10"></textarea>
-
-  <div>
-    <button type='submit'>Save</button>
-    <button type='reset'>Cancel</button>
-  </div>
-</form>
-
-<article>
-  <!-- <pre><code>{{formData$|async|json}}</code></pre> -->
+<article *ngIf="data">
+  <pre><code>{{data|json}}</code></pre>
 </article>

@@ -9,8 +9,8 @@ import {
   HostListener,
   ɵgetHostElement
 } from '@angular/core';
-import { Subject } from 'rxjs';
-import { first, map, tap } from 'rxjs/operators';
+import { Subject, concat } from 'rxjs';
+import { first, map, tap, shareReplay } from 'rxjs/operators';
 
 declare var ng: any;
 
@@ -20,22 +20,30 @@ declare var ng: any;
 })
 export class FillFormDirective
   implements OnInit, AfterViewInit, AfterContentInit, OnDestroy {
-  private after$ = new Subject<void>();
+  private afterView$ = new Subject<void>();
+  private afterContent$ = new Subject<void>();
   private destroy$ = new Subject<void>();
   private form: HTMLFormElement;
-
-  @Input()
   fillForm: { [key: string]: any };
 
-  formFiller$ = this.after$.pipe(
+  @Input('fillForm')
+  set _ffillForm(data: { [key: string]: any }) {
+    this.fillForm = data;
+    console.log('incomming', data);
+    if (data) {
+      Promise.resolve().then(() => {
+        this.updateForm();
+      });
+    }
+  }
+
+  formFiller$ = concat(this.afterView$, this.afterContent$).pipe(
     first(),
-    tap(r => console.log('after', r)),
     // map<void, any[]>(() => this.inputsCc.map(e => e)),
     map(() => ɵgetHostElement(this) as HTMLFormElement),
+    tap(r => console.log('form', r)),
     tap(r => (this.form = r)),
-    tap(() => {
-      this.updateForm();
-    })
+    shareReplay(1)
   );
 
   // no need to unsubscribe, as I'm using 'first' and it will run to completion.
@@ -65,10 +73,12 @@ export class FillFormDirective
   ngOnInit() {}
 
   ngAfterViewInit() {
-    this.after$.next();
+    this.afterView$.next();
+    this.afterView$.complete();
   }
   ngAfterContentInit() {
-    this.after$.next();
+    this.afterContent$.next();
+    this.afterContent$.complete();
   }
 
   /** Helper to fill a single entry */

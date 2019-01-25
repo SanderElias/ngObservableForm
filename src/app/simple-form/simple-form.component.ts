@@ -1,4 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { SwapiService } from '../swapi.service';
+import { People } from '../PeopleRoot';
+import { tap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-simple-form',
@@ -6,9 +9,16 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./simple-form.component.css']
 })
 export class SimpleFormComponent implements OnInit {
-  data = {};
+  data$ = this.swapi.findWithName('luke').pipe(
+    tap(data => console.log('data', data)),
+    tap(data => (this.data = data)),
+    tap(() => Promise.resolve().then(() => this.cdr.detectChanges()))
+  );
 
-  constructor() {}
+  datasub = this.data$.subscribe();
+
+  data: People;
+  constructor(private swapi: SwapiService, private cdr: ChangeDetectorRef) {}
 
   ngOnInit() {}
 
