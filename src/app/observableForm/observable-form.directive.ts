@@ -17,9 +17,11 @@ import {
   startWith,
   switchMap,
   throttleTime,
-  takeUntil
+  takeUntil,
+  take
 } from 'rxjs/operators';
 import { InputNameDirective } from './input-name.directive';
+import { isEmptyObject } from 'src/utils/isObjectEmpty';
 
 @Directive({
   // tslint:disable-next-line:directive-selector
@@ -43,6 +45,9 @@ export class ObservableFormDirective
     Observable<any>
   >();
 
+  // tslint:disable-next-line:no-output-rename
+  @Output() save = new EventEmitter();
+
   formData$: Observable<any> = this.init$.pipe(
     throttleTime(200), // make sure it doesn't refire to rapidly
     /** use an helper to get the observables from the inputs */
@@ -62,6 +67,7 @@ export class ObservableFormDirective
     ),
     /** make sure we can share/reuse this data by keepin an 'buffer' */
     shareReplay(1),
+    /** make sure all is terminated  */
     takeUntil(this.destroy$)
   );
 
@@ -78,20 +84,41 @@ export class ObservableFormDirective
   private onreset() {
     this.init$.next();
   }
+  @HostListener('submit', ['$event']) private async handleSubmit(
+    ev: MouseEvent
+  ) {
+    try {
+      // tslint:disable-next-line:no-unused-expression
+      ev && ev.preventDefault();
+      // tslint:disable-next-line:no-unused-expression
+      ev && ev.stopPropagation();
+      const formData = Object.entries(
+        await this.formData$.pipe(take(1)).toPromise()
+      )
+        .filter(r => r[1] !== undefined)
+        .reduce((r, [key, val]) => ({ ...r, [key]: val }), {});
+      // tslint:disable-next-line:no-unused-expression
+      !isEmptyObject(formData) && this.save.emit(formData);
+    } catch (e) {
+      /** stubb */
+    }
+  }
 
   /** constructor */
   constructor() {}
 
   ngOnInit() {
     // fire off init when view and content are done, everything completes, no unsub.
-    concat(this.view$, this.content$).subscribe(() =>
+    concat(this.view$, this.content$).subscribe(() => {
       /**
        * make sure the init is fired in the next microTask.
        * This is needed bcs when it fires, not all subscriptions might
        * be active yet.
        */
-      Promise.resolve().then(() => this.init$.next())
-    );
+      Promise.resolve().then(() => this.init$.next());
+      /** subscribe so the observables are readily availble when needed. */
+      this.formData$.subscribe();
+    });
   }
 
   /** fire&complete  */

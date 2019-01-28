@@ -2,9 +2,9 @@ export interface PeopleRoot {
   count: number;
   next: string;
   previous: null;
-  results: People[];
+  results: Person[];
 }
-export interface People {
+export interface Person {
   name: string;
   height: string;
   mass: string;
@@ -21,11 +21,14 @@ export interface People {
   created: string;
   edited: string;
   url: string;
+  /** I added a couple of fields for the demo */
+  date?: Date;
+  id?: string;
 }
 export enum Gender {
-  Female = "female",
-  Male = "male",
-  NA = "n/a"
+  Female = 'female',
+  Male = 'male',
+  NA = 'n/a'
 }
 export interface Address {
   id: number;

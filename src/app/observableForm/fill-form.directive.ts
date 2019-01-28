@@ -9,7 +9,7 @@ import {
   HostListener,
   ɵgetHostElement
 } from '@angular/core';
-import { Subject, concat } from 'rxjs';
+import { Subject, concat, from } from 'rxjs';
 import { first, map, tap, shareReplay } from 'rxjs/operators';
 
 declare var ng: any;
@@ -29,7 +29,6 @@ export class FillFormDirective
   @Input('fillForm')
   set _ffillForm(data: { [key: string]: any }) {
     this.fillForm = data;
-    console.log('incomming', data);
     if (data) {
       Promise.resolve().then(() => {
         this.updateForm();
@@ -39,9 +38,7 @@ export class FillFormDirective
 
   formFiller$ = concat(this.afterView$, this.afterContent$).pipe(
     first(),
-    // map<void, any[]>(() => this.inputsCc.map(e => e)),
     map(() => ɵgetHostElement(this) as HTMLFormElement),
-    tap(r => console.log('form', r)),
     tap(r => (this.form = r)),
     shareReplay(1)
   );
@@ -92,11 +89,12 @@ export class FillFormDirective
         console.warn('tyring to fill a form on a non-form element?');
       return;
     }
-    const target = form[key] as HTMLFormElement;
-    if (target === undefined) {
-      // no corrospodending field in form. ignore
+    if (!form.elements.hasOwnProperty(key)) {
+      /** the key is not in the form */
       return;
     }
+    const target = form[key] as HTMLFormElement;
+
     if (target.type === 'checkbox') {
       if (!!val) {
         // ok, we have a true-like value, set check!
@@ -105,15 +103,32 @@ export class FillFormDirective
       return;
     }
 
+    if (target.type === 'number') {
+      if (!isNaN(Number(val))) {
+        target.value = Number(val);
+      } else {
+        // tslint:disable-next-line:no-unused-expression
+        isDevMode() &&
+          console.warn(`
+
+             --------------------------------------------------------
+               Using a Number input ${target.name} for non-number value:"${val}"
+             --------------------------------------------------------
+
+        `);
+      }
+      return;
+    }
+
     if (target.type === 'date') {
       if (val.constructor.name === 'Date') {
         const date: Date = val;
         // ok we have an date need to 'fix' for date input
-        const newValue = `${date.getFullYear()}-${(
+        const newValue = `${(date.getFullYear() + '').padStart(4, '0')}-${(
           date.getMonth() +
           1 +
           ''
-        ).padStart(2, '0')}-${date.getDate()}`;
+        ).padStart(2, '0')}-${(date.getDate() + '').padStart(2, '0')}`;
         target.value = newValue;
         // console.log(target.value, newValue);
         return;

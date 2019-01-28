@@ -1,38 +1,33 @@
-<!-- <article *ngIf="data"> -->
-  <form (submit)="doSave()" observable [fillForm]="data$ | async">
-    <label>Name</label>
-    <input
-      type="text"
-      placeholder="type your name"
-      name="name"
-      minlength="2"
-      required
-      autofocus
-    />
+<form (save)="doSave($event)" observable [fillForm]="person$ | async">
+  <label>Name</label>
+  <input type="text" name="name" minlength="2" required autofocus />
 
-    <label>Eye color</label>
-    <input type="text" placeholder="type your eye color" name="eye_color" />
+  <label>Eye color</label>
+  <input type="text" name="eye_color" />
 
-    <label>Gender</label>
-    <section>
-      <label for="contactChoice1">
-        <input type="radio" id="contactChoice1" name="contact" value="female" />
-        Female</label
-      >
+  <label>Hair color</label>
+  <input type="text" name="hair_color" />
 
-      <label for="contactChoice2">
-        <input type="radio" id="contactChoice2" name="contact" value="male" />
-        Male</label
-      >
+  <label>Birth year</label>
+  <input type="text" name="birth_year" />
 
-      <label for="contactChoice3">
-        <input type="radio" id="contactChoice3" name="contact" value="n/a" />
-        NA</label
-      >
-    </section>
-  </form>
-<!-- </article> -->
+  <label>Mass</label>
+  <input type="number" name="mass" />
 
-<article *ngIf="data">
-  <pre><code>{{data|json}}</code></pre>
-</article>
+  <label>Height</label>
+  <input type="number" name="height" />
+
+  <label>Date</label>
+  <input type="date" name="date" />
+
+  <label>Gender</label>
+  <section>
+    <label> <input type="radio" name="gender" value="female" /> Female</label>
+
+    <label> <input type="radio" name="gender" value="male" /> Male</label>
+
+    <label> <input type="radio" name="gender" value="n/a" /> NA</label>
+  </section>
+  <div class="buttons"><button type="submit">Save</button> <button type="reset">Cancel</button></div>
+</form>
+<div class="backDrop" *ngIf="!person"><h2>Loading</h2></div>
