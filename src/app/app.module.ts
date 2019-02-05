@@ -11,6 +11,7 @@ import { InputNameDirective } from './observableForm/input-name.directive';
 import { ObservableFormDirective } from './observableForm/observable-form.directive';
 import { SimpleFormComponent } from './simple-form/simple-form.component';
 import { BrowserModule } from '@angular/platform-browser';
+import { FillFormArrDirective } from './observableForm/fill-form-arr.directive';
 
 // const routes: Routes = [
 //   { path: '', component: FormDemoComponent },
@@ -27,7 +28,8 @@ import { BrowserModule } from '@angular/platform-browser';
     ObservableFormDirective,
     FillFormDirective,
     LifeHookDemoComponent,
-    SimpleFormComponent
+    SimpleFormComponent,
+    FillFormArrDirective
   ],
   imports: [
     // BrowserModule,

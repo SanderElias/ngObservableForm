@@ -20,6 +20,14 @@
   <label>Date</label>
   <input type="date" name="date" />
 
+  <label>Films</label>
+  <section>
+    <ng-container *ffArray="let row fromProperty 'films'">
+      <input type="text" [value]="row" style='width: 93%'>
+
+    </ng-container>
+  </section>
+
   <label>Gender</label>
   <section>
     <label> <input type="radio" name="gender" value="female" /> Female</label>
