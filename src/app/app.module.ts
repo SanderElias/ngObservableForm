@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
-// import { RouterModule, Routes } from '@angular/router';
+import { RouterModule, Routes } from '@angular/router';
 
 import { AppComponent } from './app.component';
 import { FormDemoComponent } from './form-demo/form-demo.component';
@@ -13,12 +13,12 @@ import { SimpleFormComponent } from './simple-form/simple-form.component';
 import { BrowserModule } from '@angular/platform-browser';
 import { FillFormArrDirective } from './observableForm/fill-form-arr.directive';
 
-// const routes: Routes = [
-//   { path: '', component: FormDemoComponent },
-//   { path: 'simple', component: SimpleFormComponent },
-//   { path: 'simple/:id', component: SimpleFormComponent },
-//   // { path: '**', redirectTo: '' }
-// ];
+const routes: Routes = [
+  { path: '', component: FormDemoComponent },
+  { path: 'simple', component: SimpleFormComponent },
+  { path: 'simple/:id', component: SimpleFormComponent },
+  // { path: '**', redirectTo: '' }
+];
 
 @NgModule({
   declarations: [
@@ -29,13 +29,13 @@ import { FillFormArrDirective } from './observableForm/fill-form-arr.directive';
     FillFormDirective,
     LifeHookDemoComponent,
     SimpleFormComponent,
-    FillFormArrDirective
+    FillFormArrDirective,
   ],
   imports: [
     // BrowserModule,
     CommonModule,
     HttpClientModule,
-    // RouterModule.forRoot(routes)
+    RouterModule.forRoot(routes)
   ],
   providers: [],
   // bootstrap: [AppComponent],

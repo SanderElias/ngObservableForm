@@ -18,7 +18,8 @@ import {
   switchMap,
   throttleTime,
   takeUntil,
-  take
+  take,
+  tap
 } from 'rxjs/operators';
 import { InputNameDirective } from './input-name.directive';
 import { isEmptyObject } from 'src/utils/isObjectEmpty';
@@ -55,6 +56,7 @@ export class ObservableFormDirective
     switchMap(formObservables =>
       /** make it update on every input firing off */
       combineLatest(Object.values(formObservables)).pipe(
+        tap(vals => console.log('vals', vals)),
         /** the result is an array */
         map(results =>
           /** reduce it back to a json-like data structure */
