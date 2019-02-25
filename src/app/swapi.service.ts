@@ -4,7 +4,8 @@ import { Injectable } from '@angular/core';
 import { EMPTY, from, Observable } from 'rxjs';
 import { expand, filter, map, reduce, shareReplay, take } from 'rxjs/operators';
 import { addToCache, cacheHas, getFromCache, initCache } from '../utils/cache';
-import { PeopleRoot, Person } from './PeopleRoot';
+import { FilmsRoot } from './FilmsRoot.interface';
+import { PeopleRoot, Person } from './PeopleRoot.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -33,12 +34,12 @@ export class SwapiService {
     expand(r => (r.next ? this.load(r.next) : EMPTY)),
 
     // for each page, extract the people (in results)
-    map((r: any) => r.results),
+    map((r: PeopleRoot) => r.results),
 
     // scan to accumulate the pages (emitted by expand)
     reduce<Person[]>((allPeople, pageOfPeople) => allPeople.concat(pageOfPeople), []),
 
-    map(persons => persons.map(p => ({ ...p, date: getRandomDateInPast(), id: p.url }))),
+    map(persons => persons.map(p => ({ ...p, date: getRandomDateInPast(), id: p.url } as Person))),
 
     // Share the result with all subscribers
     shareReplay(1)
@@ -48,6 +49,14 @@ export class SwapiService {
     this.swPeople$.pipe(
       map(list => list[id]),
       filter(Boolean),
+      take(1)
+    );
+
+  swFilms$ = from(this.load<FilmsRoot>('https://swapi.co/api/films/')).pipe(shareReplay(1));
+
+  findFilmByUrl = (url: string) =>
+    this.swFilms$.pipe(
+      map(films => films.results.find(film => film.url === url)),
       take(1)
     );
 

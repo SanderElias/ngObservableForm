@@ -1,8 +1,13 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
-import { shareReplay, tap } from 'rxjs/operators';
-import { Person } from '../PeopleRoot';
+import { concat } from 'rxjs';
+import { mergeMap, shareReplay, tap, concatAll, map, toArray } from 'rxjs/operators';
 import { SwapiService } from '../swapi.service';
+import { Person } from '../PeopleRoot.interface';
+import { Film } from '../FilmsRoot.interface';
 
+interface PersonFilms extends Person {
+  films: Film[];
+}
 @Component({
   selector: 'app-simple-form',
   templateUrl: './simple-form.component.html',
@@ -10,8 +15,15 @@ import { SwapiService } from '../swapi.service';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SimpleFormComponent {
-  person: Person;
+  person: PersonFilms;
   person$ = this.swapi.getRandomPerson().pipe(
+    mergeMap(data =>
+      concat(...data.films.map(film => this.swapi.findFilmByUrl(film))).pipe(
+        toArray(),
+        map(films => ({ ...data, films })),
+        tap(r => console.log('r', r))
+      )
+    ),
     tap(data => console.log('person loaded', data)),
     tap(person => (this.person = person)),
     // /** for now we need to kick ivy into action. */

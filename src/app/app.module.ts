@@ -32,10 +32,10 @@ const routes: Routes = [
     FillFormArrDirective,
   ],
   imports: [
-    // BrowserModule,
+    RouterModule.forRoot(routes),
+    BrowserModule,
     CommonModule,
     HttpClientModule,
-    RouterModule.forRoot(routes)
   ],
   providers: [],
   // bootstrap: [AppComponent],

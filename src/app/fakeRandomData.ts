@@ -1,4 +1,4 @@
-import { Address } from './PeopleRoot';
+import { Address } from './PeopleRoot.interface';
 
 let chance;
 const changeProm = import('chance').then(Change => (chance = new chance()));
