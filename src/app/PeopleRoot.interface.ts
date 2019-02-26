@@ -1,3 +1,5 @@
+import { Film } from './FilmsRoot.interface';
+
 export interface PeopleRoot {
   count: number;
   next: string;
@@ -14,7 +16,7 @@ export interface Person {
   birth_year: string;
   gender: Gender;
   homeworld: string;
-  films: string[];
+  films: any[];
   species: string[];
   vehicles: string[];
   starships: string[];

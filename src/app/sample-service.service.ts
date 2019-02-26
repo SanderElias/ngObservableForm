@@ -10,7 +10,7 @@ import {
   flatMap,
   combineLatest
 } from 'rxjs/operators';
-import { PeopleRoot } from './PeopleRoot';
+import { PeopleRoot } from './PeopleRoot.interface';
 
 @Injectable({
   providedIn: 'root'

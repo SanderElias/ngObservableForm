@@ -1,13 +1,22 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
-import { concat } from 'rxjs';
-import { mergeMap, shareReplay, tap, concatAll, map, toArray } from 'rxjs/operators';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  Optional
+} from '@angular/core';
+import { concat, Observable } from 'rxjs';
+import {
+  mergeMap,
+  shareReplay,
+  tap,
+  concatAll,
+  map,
+  toArray
+} from 'rxjs/operators';
 import { SwapiService } from '../swapi.service';
 import { Person } from '../PeopleRoot.interface';
 import { Film } from '../FilmsRoot.interface';
 
-interface PersonFilms extends Person {
-  films: Film[];
-}
 @Component({
   selector: 'app-simple-form',
   templateUrl: './simple-form.component.html',
@@ -15,7 +24,7 @@ interface PersonFilms extends Person {
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SimpleFormComponent {
-  person: PersonFilms;
+  person: Person;
   person$ = this.swapi.getRandomPerson().pipe(
     mergeMap(data =>
       concat(...data.films.map(film => this.swapi.findFilmByUrl(film))).pipe(
