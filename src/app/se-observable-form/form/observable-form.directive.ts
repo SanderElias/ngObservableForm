@@ -1,28 +1,8 @@
-import {
-  AfterContentInit,
-  AfterViewInit,
-  ContentChildren,
-  Directive,
-  EventEmitter,
-  HostListener,
-  OnDestroy,
-  OnInit,
-  Output
-} from '@angular/core';
+import { AfterContentInit, AfterViewInit, ContentChildren, Directive, EventEmitter, HostListener, OnDestroy, OnInit, Output } from '@angular/core';
 import { combineLatest, concat, merge, Observable, Subject } from 'rxjs';
-import {
-  distinctUntilChanged,
-  map,
-  shareReplay,
-  startWith,
-  switchMap,
-  throttleTime,
-  takeUntil,
-  take,
-  tap
-} from 'rxjs/operators';
-import { InputNameDirective } from './input-name.directive';
+import { distinctUntilChanged, map, shareReplay, startWith, switchMap, take, takeUntil, tap, throttleTime } from 'rxjs/operators';
 import { isEmptyObject } from 'src/utils/isObjectEmpty';
+import { InputNameDirective } from '../input/input-name.directive';
 
 @Directive({
   // tslint:disable-next-line:directive-selector

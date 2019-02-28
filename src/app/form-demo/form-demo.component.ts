@@ -2,7 +2,7 @@ import { Component, ViewEncapsulation, ContentChildren } from '@angular/core';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { FetchFormObservable } from './FetchFormObservable';
-import { ObservableFormDirective } from '../observableForm/observable-form.directive';
+import { ObservableFormDirective } from '../se-observable-form/form/observable-form.directive';
 
 const sampleData = {
   name: 'Sander Elias',
@@ -27,7 +27,7 @@ const sampleData = {
 export class FormDemoComponent {
   @FetchFormObservable() formData$: Observable<any>;
 
-  @ContentChildren(ObservableFormDirective) ObservableForms;
+  // @ContentChildren(ObservableFormDirective) ObservableForms;
 
   changedRatio = 0;
   sample = sampleData;

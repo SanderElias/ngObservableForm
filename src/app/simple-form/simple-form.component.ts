@@ -1,21 +1,8 @@
-import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component,
-  Optional
-} from '@angular/core';
-import { concat, Observable } from 'rxjs';
-import {
-  mergeMap,
-  shareReplay,
-  tap,
-  concatAll,
-  map,
-  toArray
-} from 'rxjs/operators';
-import { SwapiService } from '../swapi.service';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
+import { concat } from 'rxjs';
+import { map, mergeMap, shareReplay, tap, toArray } from 'rxjs/operators';
 import { Person } from '../PeopleRoot.interface';
-import { Film } from '../FilmsRoot.interface';
+import { SwapiService } from '../swapi.service';
 
 @Component({
   selector: 'app-simple-form',

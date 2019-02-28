@@ -1,6 +1,6 @@
 import { Directive, HostListener, Input, OnDestroy } from '@angular/core';
 import { Subject } from 'rxjs';
-import { takeUntil, throttleTime, debounceTime } from 'rxjs/operators';
+import { debounceTime, takeUntil } from 'rxjs/operators';
 
 @Directive({
   // tslint:disable-next-line:directive-selector

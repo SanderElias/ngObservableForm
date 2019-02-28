@@ -7,8 +7,8 @@ import {
 import {} from '@angular/core/src/render3';
 import { concat, Observable, of } from 'rxjs';
 import { first, switchMap, tap } from 'rxjs/operators';
-import { ObservableFormDirective } from '../observableForm/observable-form.directive';
 import { getHookObservable } from './lifeHook';
+import { ObservableFormDirective } from '../se-observable-form/form/observable-form.directive';
 
 export declare var ng: any;
 

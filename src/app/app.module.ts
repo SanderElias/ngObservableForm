@@ -1,17 +1,14 @@
 import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
+import { BrowserModule } from '@angular/platform-browser';
 import { RouterModule, Routes } from '@angular/router';
-
 import { AppComponent } from './app.component';
 import { FormDemoComponent } from './form-demo/form-demo.component';
 import { LifeHookDemoComponent } from './life-hook-demo/life-hook-demo.component';
-import { FillFormDirective } from './observableForm/fill-form.directive';
-import { InputNameDirective } from './observableForm/input-name.directive';
-import { ObservableFormDirective } from './observableForm/observable-form.directive';
+import { SeObservableFormModule } from './se-observable-form/se-observable-form.module';
 import { SimpleFormComponent } from './simple-form/simple-form.component';
-import { BrowserModule } from '@angular/platform-browser';
-import { FillFormArrDirective } from './observableForm/fill-form-arr.directive';
+
 
 const routes: Routes = [
   { path: '', component: FormDemoComponent },
@@ -24,18 +21,16 @@ const routes: Routes = [
   declarations: [
     AppComponent,
     FormDemoComponent,
-    InputNameDirective,
-    ObservableFormDirective,
-    FillFormDirective,
     LifeHookDemoComponent,
-    SimpleFormComponent,
-    FillFormArrDirective,
+    SimpleFormComponent
+
   ],
   imports: [
     RouterModule.forRoot(routes),
     BrowserModule,
     CommonModule,
     HttpClientModule,
+    SeObservableFormModule
   ],
   providers: [],
   // bootstrap: [AppComponent],

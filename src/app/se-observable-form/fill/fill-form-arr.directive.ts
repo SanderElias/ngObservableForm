@@ -16,7 +16,7 @@ import {
 import { combineLatest, Subject } from 'rxjs';
 import { concatMap, delay, map, shareReplay, tap } from 'rxjs/operators';
 import { FillFormDirective } from './fill-form.directive';
-import { InputNameDirective } from './input-name.directive';
+import { InputNameDirective } from '../input/input-name.directive';
 
 @Directive({
   // tslint:disable-next-line:directive-selector
