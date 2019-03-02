@@ -16,16 +16,16 @@ import { PeopleRoot } from './PeopleRoot.interface';
   providedIn: 'root'
 })
 export class SampleServiceService {
-  private flush$ = new BehaviorSubject<undefined>(undefined);
+  private load$ = new BehaviorSubject<undefined>(undefined);
 
-  people$ = this.flush$.pipe(
+  people$ = this.load$.pipe(
     // Fire on flush
     /** switch to actual http */
-    mergeMap(() => this.http.get<PeopleRoot>(`https://swapi.co/api/people/`)),
+    flatMap(() => this.http.get<PeopleRoot>(`https://swapi.co/api/people/`)),
     /** some cleanup stuff */
     map(root => root.results),
-    /** make it retain its buffer (new syntax makes sure it doesn't get dropped on 0 subscribers.) */
     tap(() => console.log('http loaded')),
+    /** make it retain its buffer (new syntax makes sure it doesn't get dropped on 0 subscribers.) */
     shareReplay({ bufferSize: 1, refCount: false }),
     /** make it behave as a 'normal' http */
     tap(() => console.log('buffer result used')),
@@ -37,6 +37,6 @@ export class SampleServiceService {
   constructor(private http: HttpClient) {}
 
   flushCache() {
-    this.flush$.next(undefined);
+    this.load$.next(undefined);
   }
 }

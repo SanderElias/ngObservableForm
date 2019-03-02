@@ -31,7 +31,7 @@ export class FillFormArrDirective<T> implements OnDestroy, AfterContentInit {
 
   @ContentChildren(InputNameDirective, { descendants: true }) private inputsCc: QueryList<InputNameDirective>;
 
-  testdata$ = combineLatest(this.ff.formData$, this.propname$).pipe(
+  testdata$ = combineLatest(this.ffd.formData$, this.propname$).pipe(
     // tap(p => console.log('ff', p)),
     map(([data, prop]) => [...data[prop]]),
     tap(rowData => (this.rowData = rowData)),
@@ -92,7 +92,7 @@ export class FillFormArrDirective<T> implements OnDestroy, AfterContentInit {
     }
   }
   constructor(
-    @SkipSelf() private ff: FillFormDirective,
+    @SkipSelf() private ffd: FillFormDirective,
     private viewContainer: ViewContainerRef,
     private template: TemplateRef<NgForOfContext<T>>
   ) {}

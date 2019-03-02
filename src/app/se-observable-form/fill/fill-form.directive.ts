@@ -18,7 +18,8 @@ declare var ng: any;
   // tslint:disable-next-line:directive-selector
   selector: 'form[fillForm]'
 })
-export class FillFormDirective implements OnInit, AfterViewInit, AfterContentInit, OnDestroy {
+export class FillFormDirective
+  implements OnInit, AfterViewInit, AfterContentInit, OnDestroy {
   private afterView$ = new Subject<void>();
   private afterContent$ = new Subject<void>();
   private form: HTMLFormElement;
@@ -34,14 +35,17 @@ export class FillFormDirective implements OnInit, AfterViewInit, AfterContentIni
     })
   );
 
-  @Input('fillForm')
-  set _ffillForm(data: { [key: string]: any }) {
+  @Input('fillForm') set _ffillForm(data: { [key: string]: any }) {
     if (data) {
       this.formDataSub.next(data);
     }
   }
 
-  formFiller$ = concat(this.afterView$, this.afterContent$, this.formData$).pipe(
+  formFiller$ = concat(
+    this.afterView$,
+    this.afterContent$,
+    this.formData$
+  ).pipe(
     first(),
     map(() => ɵgetHostElement(this) as HTMLFormElement),
     tap(r => (this.form = r)),
@@ -90,10 +94,15 @@ export class FillFormDirective implements OnInit, AfterViewInit, AfterContentIni
     if (form === undefined) {
       // no form, nothing to do!
       // tslint:disable-next-line:no-unused-expression
-      isDevMode() && console.warn('tyring to fill a form on a non-form element?');
+      isDevMode() &&
+        console.warn('tyring to fill a form on a non-form element?');
       return;
     }
     if (!form.elements.hasOwnProperty(key)) {
+      // tslint:disable-next-line: no-unused-expression
+      isDevMode() &&
+        console.warn(`property "${key}" doesn't exist in form.`);
+
       /** the key is not in the form */
       return;
     }
@@ -128,10 +137,11 @@ export class FillFormDirective implements OnInit, AfterViewInit, AfterContentIni
       if (val.constructor.name === 'Date') {
         const date: Date = val;
         // ok we have an date need to 'fix' for date input
-        const newValue = `${(date.getFullYear() + '').padStart(4, '0')}-${(date.getMonth() + 1 + '').padStart(
-          2,
-          '0'
-        )}-${(date.getDate() + '').padStart(2, '0')}`;
+        const newValue = `${(date.getFullYear() + '').padStart(4, '0')}-${(
+          date.getMonth() +
+          1 +
+          ''
+        ).padStart(2, '0')}-${(date.getDate() + '').padStart(2, '0')}`;
         target.value = newValue;
         // console.log(target.value, newValue);
         return;
