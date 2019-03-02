@@ -13,13 +13,6 @@ import { SwapiService } from '../swapi.service';
 export class SimpleFormComponent {
   person: Person;
   person$ = this.swapi.getRandomPerson().pipe(
-    mergeMap(data =>
-      concat(...data.films.map(film => this.swapi.findFilmByUrl(film))).pipe(
-        toArray(),
-        map(films => ({ ...data, films })),
-        tap(r => console.log('r', r))
-      )
-    ),
     tap(data => console.log('person loaded', data)),
     tap(person => (this.person = person)),
     // /** for now we need to kick ivy into action. */
@@ -33,4 +26,5 @@ export class SimpleFormComponent {
     const toSave = { ...formdata, id: this.person.id };
     console.log('saving', JSON.stringify(toSave, null, 4));
   }
+
 }
