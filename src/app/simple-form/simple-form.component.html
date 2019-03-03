@@ -28,9 +28,13 @@
     </ng-container>
   </section> -->
 
-  <label> test</label>
-  <fieldset name='starships'>
-
+  <label> sibling</label>
+  <fieldset *ofSubGroup="let grp propName 'sibling'">
+    <label>Name</label>
+    <input type="text" name="grp.name" minlength="2" required autofocus />
+    <label>Mass</label>
+    <input type="number" name="mass" />
+    <pre>{{grp|json}}, </pre>
   </fieldset>
 
   <label>Gender</label>

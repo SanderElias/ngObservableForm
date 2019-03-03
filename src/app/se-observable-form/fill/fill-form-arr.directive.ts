@@ -31,7 +31,7 @@ export class FillFormArrDirective<T> implements OnDestroy, AfterContentInit {
 
   @ContentChildren(InputNameDirective, { descendants: true }) private inputsCc: QueryList<InputNameDirective>;
 
-  testdata$ = combineLatest(this.ffd.formData$, this.propname$).pipe(
+  arrayData$ = combineLatest(this.ffd.formData$, this.propname$).pipe(
     // tap(p => console.log('ff', p)),
     map(([data, prop]) => [...data[prop]]),
     tap(rowData => (this.rowData = rowData)),
@@ -58,7 +58,7 @@ export class FillFormArrDirective<T> implements OnDestroy, AfterContentInit {
     shareReplay(1)
   );
 
-  inputsSub = combineLatest(this.contentInit$, this.testdata$)
+  inputsSub = combineLatest(this.contentInit$, this.arrayData$)
     .pipe(
       delay(1),
       tap(() => console.log('icc', this.inputsCc)),
@@ -82,7 +82,7 @@ export class FillFormArrDirective<T> implements OnDestroy, AfterContentInit {
     )
     .subscribe();
 
-  testSub = this.testdata$.subscribe();
+  testSub = this.arrayData$.subscribe();
   // tslint:disable-next-line:no-input-rename
   @Input('ffArrayFromProperty') set propname(x: string) {
     if (x) {
@@ -98,12 +98,10 @@ export class FillFormArrDirective<T> implements OnDestroy, AfterContentInit {
   ) {}
 
   findInputs(t) {
-    console.log('find inputs', t);
     // this.inputsCc.subscribe(e => console.log(e));
   }
 
   ngAfterContentInit() {
-    console.log('contentInit');
     this.contentInit$.next();
     this.contentInit$.complete();
   }
