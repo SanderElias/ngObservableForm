@@ -107,55 +107,58 @@ export class FillFormDirective
       return;
     }
     const target = form[key] as HTMLFormElement;
-
-    if (target.type === 'checkbox') {
-      if (!!val) {
-        // ok, we have a true-like value, set check!
-        target['checked'] = true;
-      }
-      return;
-    }
-
-    if (target.type === 'number') {
-      if (!isNaN(Number(val))) {
-        target.value = Number(val);
-      } else {
-        // tslint:disable-next-line:no-unused-expression
-        isDevMode() &&
-          console.warn(`
-
-             --------------------------------------------------------
-               Using a Number input ${target.name} for non-number value:"${val}"
-             --------------------------------------------------------
-
-        `);
-      }
-      return;
-    }
-
-    if (target.type === 'date') {
-      if (val.constructor.name === 'Date') {
-        const date: Date = val;
-        // ok we have an date need to 'fix' for date input
-        const newValue = `${(date.getFullYear() + '').padStart(4, '0')}-${(
-          date.getMonth() +
-          1 +
-          ''
-        ).padStart(2, '0')}-${(date.getDate() + '').padStart(2, '0')}`;
-        target.value = newValue;
-        // console.log(target.value, newValue);
-        return;
-      }
-      // if it's not a Date, let it fall through to the normal assignment, doesn't hurt.
-    }
-
-    // surprisingly, this works for most of the types without anything fancy.
-    // I was surprised it worked for radio-groups
-    target.value = val;
+    fillFormElement(target, val);
   }
 
   ngOnDestroy(): void {
     /** kill the one subscription. */
     this.formSub.unsubscribe();
   }
+}
+
+export function fillFormElement(target: HTMLFormElement, val: any) {
+  if (target.type === 'checkbox') {
+    if (!!val) {
+      // ok, we have a true-like value, set check!
+      target['checked'] = true;
+    }
+    return;
+  }
+
+  if (target.type === 'number') {
+    if (!isNaN(Number(val))) {
+      target.value = Number(val);
+    } else {
+      // tslint:disable-next-line:no-unused-expression
+      isDevMode() &&
+        console.warn(`
+
+           --------------------------------------------------------
+             Using a Number input ${target.name} for non-number value:"${val}"
+           --------------------------------------------------------
+
+      `);
+    }
+    return;
+  }
+
+  if (target.type === 'date') {
+    if (val.constructor.name === 'Date') {
+      const date: Date = val;
+      // ok we have an date need to 'fix' for date input
+      const newValue = `${(date.getFullYear() + '').padStart(4, '0')}-${(
+        date.getMonth() +
+        1 +
+        ''
+      ).padStart(2, '0')}-${(date.getDate() + '').padStart(2, '0')}`;
+      target.value = newValue;
+      // console.log(target.value, newValue);
+      return;
+    }
+    // if it's not a Date, let it fall through to the normal assignment, doesn't hurt.
+  }
+
+  // surprisingly, this works for most of the types without anything fancy.
+  // I was surprised it worked for radio-groups
+  target.value = val;
 }

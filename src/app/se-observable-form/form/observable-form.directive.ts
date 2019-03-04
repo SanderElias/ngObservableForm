@@ -30,7 +30,8 @@ import { InputNameDirective } from '../input/input-name.directive';
   selector: 'form[observable]',
   exportAs: 'observableForm'
 })
-export class ObservableFormDirective implements OnInit, AfterContentInit, AfterViewInit, OnDestroy {
+export class ObservableFormDirective
+  implements OnInit, AfterContentInit, AfterViewInit, OnDestroy {
   view$ = new Subject<void>();
   content$ = new Subject<void>();
   init$ = new Subject<void>();
@@ -42,7 +43,9 @@ export class ObservableFormDirective implements OnInit, AfterContentInit, AfterV
    */
   @ContentChildren(InputNameDirective, { descendants: true }) private inputsCc;
   // tslint:disable-next-line:no-output-rename
-  @Output('observable') private exposeForm = new EventEmitter<Observable<any>>();
+  @Output('observable') private exposeForm = new EventEmitter<
+    Observable<any>
+  >();
 
   // tslint:disable-next-line:no-output-rename
   @Output() save = new EventEmitter();
@@ -50,7 +53,7 @@ export class ObservableFormDirective implements OnInit, AfterContentInit, AfterV
   formData$: Observable<any> = this.init$.pipe(
     throttleTime(200), // make sure it doesn't refire to rapidly
     /** use an helper to get the observables from the inputs */
-    map(() => this.gatherFormObservables()),
+    map(() => gatherFormObservables(this.inputsCc)),
     switchMap(formObservables =>
       /** make it update on every input firing off */
       combineLatest(Object.values(formObservables)).pipe(
@@ -58,7 +61,10 @@ export class ObservableFormDirective implements OnInit, AfterContentInit, AfterV
         /** the result is an array */
         map(results =>
           /** reduce it back to a json-like data structure */
-          Object.keys(formObservables).reduce((t, key, i) => ({ ...t, [key]: results[i] }), {})
+          Object.keys(formObservables).reduce(
+            (t, key, i) => ({ ...t, [key]: results[i] }),
+            {}
+          )
         )
       )
     ),
@@ -72,20 +78,26 @@ export class ObservableFormDirective implements OnInit, AfterContentInit, AfterV
    * subscribe to init, so we can export the formData$ observable
    * with the eventemitter. this might be subject to change.
    */
-  private initSub = this.init$.subscribe(() => this.exposeForm.emit(this.formData$));
+  private initSub = this.init$.subscribe(() =>
+    this.exposeForm.emit(this.formData$)
+  );
 
   /** listen to the reset events on the form, and just make init refire to 'reset' all data */
   @HostListener('reset')
   private onreset() {
     this.init$.next();
   }
-  @HostListener('submit', ['$event']) private async handleSubmit(ev: MouseEvent) {
+  @HostListener('submit', ['$event']) private async handleSubmit(
+    ev: MouseEvent
+  ) {
     try {
       // tslint:disable-next-line:no-unused-expression
       ev && ev.preventDefault();
       // tslint:disable-next-line:no-unused-expression
       ev && ev.stopPropagation();
-      const formData = Object.entries(await this.formData$.pipe(take(1)).toPromise())
+      const formData = Object.entries(
+        await this.formData$.pipe(take(1)).toPromise()
+      )
         .filter(r => r[1] !== undefined)
         .reduce((r, [key, val]) => ({ ...r, [key]: val }), {});
       // tslint:disable-next-line:no-unused-expression
@@ -130,43 +142,50 @@ export class ObservableFormDirective implements OnInit, AfterContentInit, AfterV
     this.destroy$.next();
     this.destroy$.complete();
   }
+}
+
+export interface FormObservers {
+  [x:string]: Observable<any>;
+}
+
+/**
+ * Gather all available inputs into a single object
+ *   { [formEntryName]: Observable<inputType>}
+ * this mathes the json structure of the model
+ */
+export function gatherFormObservables(inputs: InputNameDirective[]):FormObservers {
+  const inputObservers = inputs.reduce((combinedObservers, el) => {
+    if (combinedObservers[el.name]) {
+      /**
+       * The same name already exists, merge the additional
+       * one so it is exposed as a single observable.
+       * note that only the last one that fire's wins.
+       * This works well for radio buttons. No other inputs should get the same name
+       */
+      combinedObservers[el.name] = merge(combinedObservers[el.name], el.value$);
+    } else {
+      /** add the value observer to the form */
+      combinedObservers[el.name] = el.value$;
+    }
+    return combinedObservers;
+  }, {});
 
   /**
-   * Gather all available inputs into a single object
-   *   { [formEntryName]: Observable<inputType>}
-   * this mathes the json structure of the model
+   * Put in a default value of undefined, this signals 'no change yet'
+   * Also add distinctUntilChanged here,
+   * we don't need to fire off anything above if there are no
+   * changes in an input, this takes in account that there might
+   * be multiple inputs with the same name (radio's for example)
+   * this makes sure the above logic will not go haywire.
    */
-  private gatherFormObservables() {
-    const inputObservers = this.inputsCc.reduce((combinedObservers, el) => {
-      if (combinedObservers[el.name]) {
-        /**
-         * The same name already exists, merge the additional
-         * one so it is exposed as a single observable.
-         * note that only the last one that fire's wins.
-         * This works well for radio buttons. No other inputs should get the same name
-         */
-        combinedObservers[el.name] = merge(combinedObservers[el.name], el.value$);
-      } else {
-        /** add the value observer to the form */
-        combinedObservers[el.name] = el.value$;
-      }
-      return combinedObservers;
-    }, {});
-
-    /**
-     * Put in a default value of undefined, this signals 'no change yet'
-     * Also add distinctUntilChanged here,
-     * we don't need to fire off anything above if there are no
-     * changes in an input, this takes in account that there might
-     * be multiple inputs with the same name (radio's for example)
-     * this makes sure the above logic will not go haywire.
-     */
-    return Object.entries(inputObservers).reduce((all, [name, obs]: [string, Observable<any>]) => {
+  return Object.entries(inputObservers).reduce(
+    (all, [name, obs]: [string, Observable<any>]) => {
       all[name] = obs.pipe(
         startWith(undefined),
         distinctUntilChanged()
       );
       return all;
-    }, {});
-  }
+    },
+    {}
+  );
 }

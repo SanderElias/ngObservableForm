@@ -24,7 +24,7 @@ export function FetchFormObservable(name?: string): Function {
       first(),
       /** switch to the actual formData stuff */
       switchMap(() => {
-        console.log('componentDefenition', cdef);
+        console.log('componentDefinition', cdef);
         /** init done, DOM is ready */
         /**
          *  for now, cheat, as ivy isn't yet exposing all I need
