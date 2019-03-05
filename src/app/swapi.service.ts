@@ -1,10 +1,10 @@
 // tslint:disable:member-ordering
 // import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { EMPTY, from, Observable, concat } from 'rxjs';
-import { expand, filter, map, reduce, shareReplay, take, mergeMap, toArray } from 'rxjs/operators';
+import { concat, EMPTY, from, Observable } from 'rxjs';
+import { concatMap, expand, filter, map, mergeMap, reduce, shareReplay, take, toArray } from 'rxjs/operators';
 import { addToCache, cacheHas, getFromCache, initCache } from '../utils/cache';
-import { FilmsRoot, Film } from './FilmsRoot.interface';
+import { Film, FilmsRoot } from './FilmsRoot.interface';
 import { PeopleRoot, Person } from './PeopleRoot.interface';
 
 @Injectable({
@@ -37,9 +37,16 @@ export class SwapiService {
     map((r: PeopleRoot) => r.results),
 
     // scan to accumulate the pages (emitted by expand)
-    reduce<Person[]>((allPeople, pageOfPeople) => allPeople.concat(pageOfPeople), []),
+    reduce<Person[]>(
+      (allPeople, pageOfPeople) => allPeople.concat(pageOfPeople),
+      []
+    ),
 
-    map(persons => persons.map(p => ({ ...p, date: getRandomDateInPast(), id: p.url } as Person))),
+    map(persons =>
+      persons.map(
+        p => ({ ...p, date: getRandomDateInPast(), id: p.url } as Person)
+      )
+    ),
 
     // Share the result with all subscribers
     shareReplay(1)
@@ -52,7 +59,9 @@ export class SwapiService {
       take(1)
     );
 
-  swFilms$ = from(this.load<FilmsRoot>('https://swapi.co/api/films/')).pipe(shareReplay(1));
+  swFilms$ = from(this.load<FilmsRoot>('https://swapi.co/api/films/')).pipe(
+    shareReplay(1)
+  );
 
   findFilmByUrl = (url: string): Observable<Film> =>
     this.swFilms$.pipe(
@@ -60,17 +69,21 @@ export class SwapiService {
       take(1)
     );
 
-  getRandomPerson = (): Observable<Person> =>
-    this.swPeople$.pipe(
-      map(list => {
-        const i = Math.floor(Math.random() * list.length);
-        return list[i];
-      }),
-      /** load in films data */
-      mergeMap(data =>
-        concat(...data.films.map(film => this.findFilmByUrl(film))).pipe(
-          toArray(),
-          map(films => ({ ...data, films }))
+  getRandomPerson = (count = 1): Observable<Person> =>
+    from(Array.from({ length: count })).pipe(
+      concatMap(() =>
+        this.swPeople$.pipe(
+          map(list => {
+            const i = Math.floor(Math.random() * list.length);
+            return list[i];
+          }),
+          /** load in films data */
+          mergeMap(data =>
+            concat(...data.films.map(film => this.findFilmByUrl(film))).pipe(
+              toArray(),
+              map(films => ({ ...data, films }))
+            )
+          )
         )
       )
     );
@@ -78,7 +91,13 @@ export class SwapiService {
   constructor(/*private http: HttpClient*/) {}
 
   findWithName = (name: string) =>
-    this.swPeople$.pipe(map(list => list.find(row => row.name.toLowerCase().includes(name.toLowerCase().trim()))));
+    this.swPeople$.pipe(
+      map(list =>
+        list.find(row =>
+          row.name.toLowerCase().includes(name.toLowerCase().trim())
+        )
+      )
+    );
 }
 
 function getRandomDateInPast() {

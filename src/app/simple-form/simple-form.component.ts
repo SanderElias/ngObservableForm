@@ -13,8 +13,10 @@ import { T_HOST } from '@angular/core/src/render3/interfaces/view';
 })
 export class SimpleFormComponent {
   person: Person;
-  person$ = this.swapi.getRandomPerson().pipe(
-    mergeMap(() => this.swapi.getRandomPerson(), (person, sibling) => ({ ...person, sibling })),
+  person$ = this.swapi.getRandomPerson(3).pipe(
+    toArray(),
+    map(([person,sibling,child])=> ({...person, sibling:{...sibling, child}})),
+    // mergeMap(() => this.swapi.getRandomPerson(), (person, sibling) => ({ ...person, sibling })),
     tap(person => (this.person = person)),
     tap(p => console.log(p)),
     // /** for now we need to kick ivy into action. */
