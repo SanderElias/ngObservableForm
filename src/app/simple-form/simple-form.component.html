@@ -29,16 +29,18 @@
   </section> -->
 
   <label> subFields</label>
-  <fieldset *ofSubGroup="'sibling'" >
+  <fieldset *of-name="'sibling'">
     <legend>Sibling</legend>
     <label>Name</label>
-    <input type="text" name="name" minlength="2" required autofocus />
+    <input type="text" name="name" minlength="2"   />
     <label>Mass</label>
     <input type="number" name="mass" />
-    <fieldset *ofSubGroup="'child'">
+    <fieldset *of-name="'child'">
       <legend>Child</legend>
       <label>Name</label>
-      <input type="text" name="name" minlength="2" required autofocus />
+      <input type="text" name="name" minlength="2"   />
+      <label>Eye color</label>
+      <input type="text" name="eye_color" />
     </fieldset>
   </fieldset>
 

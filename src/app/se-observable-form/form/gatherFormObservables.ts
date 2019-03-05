@@ -9,7 +9,7 @@ import { FormObservables } from './FormObservables.interface';
  */
 export function gatherFormObservables(inputs: InputNameDirective[]): FormObservables {
   const inputObservers = inputs.reduce((combinedObservers, el) => {
-    console.log(el.constructor.name, el.name)
+    // console.log(el.constructor.name, el.name);
     if (combinedObservers[el.name]) {
       /**
        * The same name already exists, merge the additional
@@ -18,8 +18,7 @@ export function gatherFormObservables(inputs: InputNameDirective[]): FormObserva
        * This works well for radio buttons. No other inputs should get the same name
        */
       combinedObservers[el.name] = merge(combinedObservers[el.name], el.value$);
-    }
-    else {
+    } else {
       /** add the value observer to the form */
       combinedObservers[el.name] = el.value$;
     }
@@ -34,7 +33,10 @@ export function gatherFormObservables(inputs: InputNameDirective[]): FormObserva
    * this makes sure the above logic will not go haywire.
    */
   return Object.entries(inputObservers).reduce((all, [name, obs]: [string, Observable<any>]) => {
-    all[name] = obs.pipe(startWith(undefined), distinctUntilChanged());
+    all[name] = obs.pipe(
+      startWith(undefined),
+      distinctUntilChanged()
+    );
     return all;
   }, {});
 }

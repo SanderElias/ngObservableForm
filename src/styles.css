@@ -58,17 +58,22 @@ input:required:valid {
   background-repeat: no-repeat;
 }
 
-form {
+form, fieldset {
   display: grid;
   grid-template-columns: 80px 250px;
   grid-auto-rows: auto;
   grid-row-gap: 8px;
   background-color: #e7dff5;
-  width: 330px;
+  width: 450px;
   padding: 10px;
   margin-left: 2em;
   border-radius: 15px;
   box-shadow: 10px 9px 5px 0px rgba(0, 0, 0, 0.45);
+}
+
+fieldset {
+  width: auto;
+  margin-left: 0;
 }
 
 input,

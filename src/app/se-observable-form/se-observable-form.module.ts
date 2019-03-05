@@ -6,10 +6,18 @@ import { FillFormDirective } from './fill/fill-form.directive';
 import { FillFormArrDirective } from './fill/fill-form-arr.directive';
 import { OfSubSetDirective } from './form/of-sub-set.directive';
 
-const declarations = [InputNameDirective, ObservableFormDirective, FillFormDirective, FillFormArrDirective, OfSubSetDirective];
+
+
+const declarations = [
+  InputNameDirective,
+  ObservableFormDirective,
+  FillFormDirective,
+  FillFormArrDirective,
+  OfSubSetDirective
+];
 
 @NgModule({
-  declarations : declarations,
+  declarations: declarations,
   imports: [CommonModule],
   exports: declarations
 })

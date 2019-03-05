@@ -15,8 +15,6 @@ export class InputNameDirective implements OnDestroy {
   @Input() name: string;
   /** get the inputs type. Optional, as none will be handled by the default handler */
   @Input() type: string;
-  /** property to identify to which form/subform this input belongs to */
-  public belongsTo: any;
 
   /**
    * Value$ is an observable that emits the value of

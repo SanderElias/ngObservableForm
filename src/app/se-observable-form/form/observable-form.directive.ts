@@ -3,47 +3,29 @@ import {
   AfterViewInit,
   ContentChildren,
   Directive,
+  ElementRef,
   EventEmitter,
   HostListener,
   OnDestroy,
   OnInit,
   Output,
-  QueryList,
-  ElementRef,
-  DoCheck
+  QueryList
 } from '@angular/core';
-import {
-  combineLatest,
-  concat,
-  Observable,
-  ReplaySubject,
-  Subject,
-  from
-} from 'rxjs';
-import {
-  shareReplay,
-  switchMap,
-  take,
-  takeUntil,
-  tap,
-  throttleTime,
-  map
-} from 'rxjs/operators';
+import { concat, Observable, ReplaySubject, Subject } from 'rxjs';
+import { shareReplay, switchMap, take, takeUntil, tap, throttleTime } from 'rxjs/operators';
 import { isEmptyObject } from 'src/utils/isObjectEmpty';
 import { InputNameDirective } from '../input/input-name.directive';
 import { FormObservables } from './FormObservables.interface';
 import { gatherFormObservables } from './gatherFormObservables';
 import { OfSubSetDirective } from './of-sub-set.directive';
 import { transformFormObervers } from './transformFormObervers';
-import { findNewDirectives, findDirectives } from './findDirectives';
 
 @Directive({
   // tslint:disable-next-line:directive-selector
   selector: 'form[observable]',
   exportAs: 'observableForm'
 })
-export class ObservableFormDirective
-  implements OnInit, AfterContentInit, AfterViewInit, OnDestroy, DoCheck {
+export class ObservableFormDirective implements OnInit, AfterContentInit, AfterViewInit, OnDestroy {
   view$ = new Subject<void>();
   content$ = new Subject<void>();
   init$ = new Subject<void>();
@@ -59,9 +41,7 @@ export class ObservableFormDirective
   @ContentChildren(OfSubSetDirective, { descendants: true })
   private subsets: QueryList<InputNameDirective>;
   // tslint:disable-next-line:no-output-rename
-  @Output('observable') private exposeForm = new EventEmitter<
-    Observable<any>
-  >();
+  @Output('observable') private exposeForm = new EventEmitter<Observable<any>>();
 
   // tslint:disable-next-line:no-output-rename
   @Output() save = new EventEmitter();
@@ -87,26 +67,20 @@ export class ObservableFormDirective
    * subscribe to init, so we can export the formData$ observable
    * with the eventemitter. this might be subject to change.
    */
-  private initSub = this.init$.subscribe(() =>
-    this.exposeForm.emit(this.formData$)
-  );
+  private initSub = this.init$.subscribe(() => this.exposeForm.emit(this.formData$));
 
   /** listen to the reset events on the form, and just make init refire to 'reset' all data */
   @HostListener('reset')
   private onreset() {
     this.init$.next();
   }
-  @HostListener('submit', ['$event']) private async handleSubmit(
-    ev: MouseEvent
-  ) {
+  @HostListener('submit', ['$event']) private async handleSubmit(ev: MouseEvent) {
     try {
       // tslint:disable-next-line:no-unused-expression
       ev && ev.preventDefault();
       // tslint:disable-next-line:no-unused-expression
       ev && ev.stopPropagation();
-      const formData = Object.entries(
-        await this.formData$.pipe(take(1)).toPromise()
-      )
+      const formData = Object.entries(await this.formData$.pipe(take(1)).toPromise())
         .filter(r => r[1] !== undefined)
         .reduce((r, [key, val]) => ({ ...r, [key]: val }), {});
       // tslint:disable-next-line:no-unused-expression
@@ -136,14 +110,6 @@ export class ObservableFormDirective
       /** subscribe so the observables are readily available when needed. */
       this.formData$.subscribe();
     });
-    setTimeout(() => {
-      for (const [el, dir] of findDirectives(this.elm.nativeElement, [
-        InputNameDirective,
-        OfSubSetDirective
-      ])) {
-        console.log(el, dir.name);
-      }
-    }, 2000);
   }
 
   /** fire&complete  */

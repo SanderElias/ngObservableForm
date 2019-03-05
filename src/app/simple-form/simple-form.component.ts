@@ -16,7 +16,6 @@ export class SimpleFormComponent {
   person$ = this.swapi.getRandomPerson(3).pipe(
     toArray(),
     map(([person,sibling,child])=> ({...person, sibling:{...sibling, child}})),
-    // mergeMap(() => this.swapi.getRandomPerson(), (person, sibling) => ({ ...person, sibling })),
     tap(person => (this.person = person)),
     tap(p => console.log(p)),
     // /** for now we need to kick ivy into action. */
