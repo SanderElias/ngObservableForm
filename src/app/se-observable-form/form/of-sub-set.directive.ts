@@ -1,28 +1,33 @@
 // tslint:disable: no-unused-expression
-import { NgForOfContext } from '@angular/common';
 import {
+  AfterContentInit,
+  ChangeDetectorRef,
   Directive,
+  EmbeddedViewRef,
   Input,
+  Optional,
   SkipSelf,
   TemplateRef,
   ViewContainerRef,
-  ViewRef,
-  ContentChildren,
-  AfterContentInit,
-  QueryList,
-  ɵgetLContext as getContext,
-  ɵgetHostElement as getHostElement,
-  ɵgetDirectives as getDirectives,
-  EmbeddedViewRef
+  ViewRef
 } from '@angular/core';
-import { asyncScheduler, combineLatest, Observable, Subject } from 'rxjs';
-import { filter, map, observeOn, shareReplay, tap } from 'rxjs/operators';
+import {
+  asyncScheduler,
+  combineLatest,
+  Observable,
+  ReplaySubject,
+  Subject
+} from 'rxjs';
+import { filter, map, observeOn, shareReplay, take, tap } from 'rxjs/operators';
 import {
   FillFormDirective,
   fillFormElement
 } from '../fill/fill-form.directive';
 import { InputNameDirective } from '../input/input-name.directive';
-import { gatherFormObservables } from './observable-form.directive';
+import { findNewDirectives } from './findDirectives';
+import { FormObservables } from './FormObservables.interface';
+import { gatherFormObservables } from './gatherFormObservables';
+import { transformFormObervers } from './transformFormObervers';
 
 const enum DataType {
   array,
@@ -32,24 +37,51 @@ const enum DataType {
   // tslint:disable-next-line:directive-selector
   selector: '[ofSubGroup]'
 })
-export class OfSubSetDirective<T> implements AfterContentInit {
+export class OfSubSetDirective implements AfterContentInit {
+  /** helper to fire when the proname changes */
   private propName$ = new Subject<string>();
-  dataType: DataType;
+  /** helper to for the value$ */
+  private _value = new Subject<any>();
+  /** the viewref of the template */
   view: ViewRef;
-  subsetData$ : Observable<any>
+  /** public observable, fires when any of the subFields change */
+  value$ = this._value.asObservable();
+  /** the name of the property this represents */
+  name: string;
+  /** this directive is always of type subset  */
+  type = 'subSet';
+  /** property to identify to which form/subform this input belongs to */
+  public belongsTo: any;
+  /** hold the parent of this subset */
+  parent = this.oss || this.ffd;
+  /** provide data for children (if any) */
+  formData$ = new ReplaySubject(1);
+
+  @Input('value') private set _valueIncomming(x) {
+    console.log(this.type, x);
+  }
 
   @Input('ofSubGroup') set _cont(x: any) {
-    console.log('grou', x, getHostElement(this).getAttribute('ofSubGroup'));
+    if (x) {
+      if (typeof x === 'string') {
+        this.name = x;
+        this.propName$.next(x);
+        console.log(`fieldset added for ${x}`);
+      } else {
+        throw new Error(
+          `directive ofSubGroup needs a string and it received a ${typeof x}`
+        );
+      }
+    }
   }
 
-  @Input('ofSubGroupPropName') set _name(x: string) {
-    console.log('osname', x);
-    x && this.propName$.next(x);
-  }
+  // @Input('ofSubGroupPropName') set _name(x: string) {
+  //   x && this.propName$.next(x);
+  // }
 
   subData$: Observable<object | any[]> = combineLatest(
     this.propName$,
-    this.ffd.formData$
+    this.parent.formData$
   ).pipe(
     /**
      * use async scheduler to take it to the next cycle.
@@ -62,17 +94,13 @@ export class OfSubSetDirective<T> implements AfterContentInit {
     filter(Boolean),
     /** stop if its not an "object" */
     filter(data => typeof data === 'object'),
-    /** side-effect to store datatype */
-    tap(data => {
-      this.dataType = Array.isArray(data) ? DataType.array : DataType.object;
-    }),
+    /** stop if it is an array */
+    filter(data => !Array.isArray(data)),
     /** create (and destroy existing) view, as a side-effect */
     tap(data => {
       /** if there is an existing one, destroy it first */
-      // setTimeout(() => {
-      /** move to next frame, keep contents out of parent form */
-      this.view && this.viewContainer.remove();
-      this.view = this.viewContainer.createEmbeddedView(this.template, {
+      this.view && this.vcr.remove();
+      this.view = this.vcr.createEmbeddedView(this.template, {
         // $implicit: data,
         ...data
         // data
@@ -81,6 +109,10 @@ export class OfSubSetDirective<T> implements AfterContentInit {
     }),
     // observeOn(asyncScheduler),
     tap(data => this.fillThem(data)),
+    /** pay it forward to children (if any) */
+    tap(data => this.formData$.next(data)),
+    /** template may contain stuff that needs a CDR cycle */
+    tap(() => Promise.resolve().then(() => this.cdr.detectChanges())),
     /** store the data for future reuse/sharing */
     shareReplay({ refCount: true, bufferSize: 1 })
   );
@@ -88,9 +120,11 @@ export class OfSubSetDirective<T> implements AfterContentInit {
   testsub = this.subData$.subscribe();
 
   constructor(
-    @SkipSelf() private ffd: FillFormDirective,
-    private viewContainer: ViewContainerRef,
-    private template: TemplateRef<NgForOfContext<T>>
+    @Optional() @SkipSelf() private ffd: FillFormDirective,
+    @Optional() @SkipSelf() private oss: OfSubSetDirective,
+    private cdr: ChangeDetectorRef,
+    private vcr: ViewContainerRef,
+    private template: TemplateRef<any>
   ) {
     // this.fillThem = this.fillThem.bind(this);
   }
@@ -100,45 +134,46 @@ export class OfSubSetDirective<T> implements AfterContentInit {
   }
 
   fillThem(data: any) {
-    const x = this.viewContainer.get(0) as EmbeddedViewRef<T>;
-    const el = this.viewContainer.element.nativeElement as HTMLElement;
+    const firstContainer = this.vcr.get(0) as EmbeddedViewRef<any>;
     const inputs = [] as InputNameDirective[];
-    x.rootNodes.forEach(el => {
-      for (const [elm, dir] of findDirectives(
+    firstContainer.rootNodes.forEach((el: HTMLFieldSetElement) => {
+      el.setAttribute('name', this.name);
+      for (const [elm, dir] of findNewDirectives(
         el,
-        InputNameDirective
-      ) as IterableIterator<[HTMLFormElement, InputNameDirective]>) {
+        [InputNameDirective, OfSubSetDirective],
+        this
+      ) as IterableIterator<[HTMLFormElement, any]>) {
         if (data.hasOwnProperty(elm.name)) {
           fillFormElement(elm, data[elm.name]);
-          inputs.push(dir);
         }
+        inputs.push(dir);
       }
     });
-    console.log('in', inputs)
-    const fi = gatherFormObservables( inputs)
-    combineLatest(Object.values(fi)).pipe(
-      /** log */
-      tap(inp => console.log('i',inp))
-    ).subscribe()
-  }
-}
-
-function* findDirectives(
-  elm: HTMLElement,
-  dir: any
-): IterableIterator<[HTMLElement, any]> {
-  const outerDirective = getDirectives(elm).find(i => i instanceof dir);
-  if (outerDirective) {
-    yield [elm as HTMLElement, outerDirective];
+    setTimeout(() => this.hookUpObservers(),1000)
   }
 
-  for (const item of (elm.children as unknown) as HTMLElement[]) {
-    const directive = getDirectives(item).find(i => i instanceof dir);
-    if (directive) {
-      yield [item as HTMLElement, directive];
-    }
-    if (item.children.length > 0) {
-      yield* findDirectives(item, dir);
-    }
+  hookUpObservers() {
+    const firstContainer = this.vcr.get(0) as EmbeddedViewRef<any>;
+    const inputs = [] as InputNameDirective[];
+    firstContainer.rootNodes.forEach((el: HTMLFieldSetElement) => {
+      for (const [elm, dir] of findNewDirectives(
+        el,
+        [InputNameDirective, OfSubSetDirective],
+        undefined
+      )) {
+        inputs.push(dir);
+        console.log('hookup', dir.name, dir.value$)
+      }
+    });
+    console.log('in', inputs);
+    //.subscribe(this._value);
+    // connect results to value$ output.
+    transformFormObervers(gatherFormObservables(inputs)).subscribe(this._value);
+    // this.ofd.addFormData({ [this.name]: transformFormObervers(gatherFormObservables(inputs)) });
+  }
+
+  async addFormData(fo: FormObservables) {
+    const start = await this._value.pipe(take(1)).toPromise();
+    this._value.next({ ...start, ...fo });
   }
 }
