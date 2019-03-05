@@ -8,44 +8,40 @@ import {
   OnDestroy,
   OnInit,
   Output,
-  ɵgetHostElement as getHostElement
+  ɵgetHostElement as getHostElement,
+  QueryList
 } from '@angular/core';
-import { combineLatest, concat, merge, Observable, Subject } from 'rxjs';
-import {
-  distinctUntilChanged,
-  map,
-  shareReplay,
-  startWith,
-  switchMap,
-  take,
-  takeUntil,
-  tap,
-  throttleTime
-} from 'rxjs/operators';
+import { concat, Observable, Subject, ReplaySubject } from 'rxjs';
+import { map, shareReplay, switchMap, take, takeUntil, throttleTime, tap, mergeMap } from 'rxjs/operators';
 import { isEmptyObject } from 'src/utils/isObjectEmpty';
 import { InputNameDirective } from '../input/input-name.directive';
+import { transformFormObervers } from './transformFormObervers';
+import { gatherFormObservables } from './gaterFormObservables';
+import { FormObservables } from './FormObservables.interface';
+import { findComponentView } from '@angular/core/src/render3/util/view_traversal_utils';
+import { findDirectives } from './findDirectives';
+import { OfSubSetDirective } from './of-sub-set.directive';
 
 @Directive({
   // tslint:disable-next-line:directive-selector
   selector: 'form[observable]',
   exportAs: 'observableForm'
 })
-export class ObservableFormDirective
-  implements OnInit, AfterContentInit, AfterViewInit, OnDestroy {
+export class ObservableFormDirective implements OnInit, AfterContentInit, AfterViewInit, OnDestroy {
   view$ = new Subject<void>();
   content$ = new Subject<void>();
   init$ = new Subject<void>();
   destroy$ = new Subject<void>();
+  innerData$ = new ReplaySubject<FormObservables>(1);
   /**
    * TODO: considder adding viewChildren.
    * Perhaps, when there is a compelling use-case
    * additional info, in this spirit both afterXInit events are already handled.
    */
-  @ContentChildren(InputNameDirective, { descendants: true }) private inputsCc;
+  @ContentChildren(InputNameDirective, { descendants: true }) private inputsCc: QueryList<InputNameDirective>;
+  @ContentChildren(OfSubSetDirective, { descendants: true }) private subsets: QueryList<InputNameDirective>;
   // tslint:disable-next-line:no-output-rename
-  @Output('observable') private exposeForm = new EventEmitter<
-    Observable<any>
-  >();
+  @Output('observable') private exposeForm = new EventEmitter<Observable<any>>();
 
   // tslint:disable-next-line:no-output-rename
   @Output() save = new EventEmitter();
@@ -53,51 +49,42 @@ export class ObservableFormDirective
   formData$: Observable<any> = this.init$.pipe(
     throttleTime(200), // make sure it doesn't refire to rapidly
     /** use an helper to get the observables from the inputs */
-    map(() => gatherFormObservables(this.inputsCc)),
-    switchMap(formObservables =>
-      /** make it update on every input firing off */
-      combineLatest(Object.values(formObservables)).pipe(
-        tap(vals => console.log('vals', vals)),
-        /** the result is an array */
-        map(results =>
-          /** reduce it back to a json-like data structure */
-          Object.keys(formObservables).reduce(
-            (t, key, i) => ({ ...t, [key]: results[i] }),
-            {}
-          )
-        )
-      )
-    ),
+    tap(() => {
+      const ChildInputs = [];
+      // ...findDirectives(getHostElement(this) as HTMLElement, [InputNameDirective, OfSubSetDirective])
+      // ].map(([elm, directive]) => directive as InputNameDirective);
+      this.inputsCc.forEach(i => ChildInputs.push(i));
+      console.log('elms', ChildInputs);
+      this.innerData$.next(gatherFormObservables(ChildInputs));
+    }),
+    switchMap(() => this.innerData$),
+    switchMap(transformFormObervers),
     /** make sure we can share/reuse this data by keepin an 'buffer' */
     shareReplay(1),
     /** make sure all is terminated  */
     takeUntil(this.destroy$)
   );
 
+  dummy = this.init$.pipe(mergeMap(() => this.inputsCc.changes.pipe(tap(c => console.log('changes', c))))).subscribe();
+
   /**
    * subscribe to init, so we can export the formData$ observable
    * with the eventemitter. this might be subject to change.
    */
-  private initSub = this.init$.subscribe(() =>
-    this.exposeForm.emit(this.formData$)
-  );
+  private initSub = this.init$.subscribe(() => this.exposeForm.emit(this.formData$));
 
   /** listen to the reset events on the form, and just make init refire to 'reset' all data */
   @HostListener('reset')
   private onreset() {
     this.init$.next();
   }
-  @HostListener('submit', ['$event']) private async handleSubmit(
-    ev: MouseEvent
-  ) {
+  @HostListener('submit', ['$event']) private async handleSubmit(ev: MouseEvent) {
     try {
       // tslint:disable-next-line:no-unused-expression
       ev && ev.preventDefault();
       // tslint:disable-next-line:no-unused-expression
       ev && ev.stopPropagation();
-      const formData = Object.entries(
-        await this.formData$.pipe(take(1)).toPromise()
-      )
+      const formData = Object.entries(await this.formData$.pipe(take(1)).toPromise())
         .filter(r => r[1] !== undefined)
         .reduce((r, [key, val]) => ({ ...r, [key]: val }), {});
       // tslint:disable-next-line:no-unused-expression
@@ -109,6 +96,11 @@ export class ObservableFormDirective
 
   /** constructor */
   constructor() {}
+
+  async addFormData(fo: FormObservables) {
+    const start = await this.innerData$.pipe(take(1)).toPromise();
+    this.innerData$.next({ ...start, ...fo });
+  }
 
   ngOnInit() {
     // fire off init when view and content are done, everything completes, no unsub.
@@ -142,50 +134,4 @@ export class ObservableFormDirective
     this.destroy$.next();
     this.destroy$.complete();
   }
-}
-
-export interface FormObservers {
-  [x:string]: Observable<any>;
-}
-
-/**
- * Gather all available inputs into a single object
- *   { [formEntryName]: Observable<inputType>}
- * this mathes the json structure of the model
- */
-export function gatherFormObservables(inputs: InputNameDirective[]):FormObservers {
-  const inputObservers = inputs.reduce((combinedObservers, el) => {
-    if (combinedObservers[el.name]) {
-      /**
-       * The same name already exists, merge the additional
-       * one so it is exposed as a single observable.
-       * note that only the last one that fire's wins.
-       * This works well for radio buttons. No other inputs should get the same name
-       */
-      combinedObservers[el.name] = merge(combinedObservers[el.name], el.value$);
-    } else {
-      /** add the value observer to the form */
-      combinedObservers[el.name] = el.value$;
-    }
-    return combinedObservers;
-  }, {});
-
-  /**
-   * Put in a default value of undefined, this signals 'no change yet'
-   * Also add distinctUntilChanged here,
-   * we don't need to fire off anything above if there are no
-   * changes in an input, this takes in account that there might
-   * be multiple inputs with the same name (radio's for example)
-   * this makes sure the above logic will not go haywire.
-   */
-  return Object.entries(inputObservers).reduce(
-    (all, [name, obs]: [string, Observable<any>]) => {
-      all[name] = obs.pipe(
-        startWith(undefined),
-        distinctUntilChanged()
-      );
-      return all;
-    },
-    {}
-  );
 }

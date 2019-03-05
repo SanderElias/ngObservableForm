@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
 import { concat } from 'rxjs';
-import { map, mergeMap, shareReplay, tap, toArray, flatMap } from 'rxjs/operators';
+import { map, mergeMap, shareReplay, tap, toArray, flatMap, combineLatest, concatMap } from 'rxjs/operators';
 import { Person } from '../PeopleRoot.interface';
 import { SwapiService } from '../swapi.service';
 import { T_HOST } from '@angular/core/src/render3/interfaces/view';
@@ -14,7 +14,14 @@ import { T_HOST } from '@angular/core/src/render3/interfaces/view';
 export class SimpleFormComponent {
   person: Person;
   person$ = this.swapi.getRandomPerson().pipe(
-    mergeMap(() => this.swapi.getRandomPerson(), (person, sibling) => ({ ...person, sibling })),
+    concatMap(
+      () => [this.swapi.getRandomPerson(), this.swapi.getRandomPerson()],
+      (person, siblins) => {
+        console.log(person,siblins)
+        return { ...person, sibling:{...person}}
+
+      }
+    ),
     tap(person => (this.person = person)),
     tap(p => console.log(p)),
     // /** for now we need to kick ivy into action. */
