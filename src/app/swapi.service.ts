@@ -1,8 +1,20 @@
 // tslint:disable:member-ordering
 // import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { concat, EMPTY, from, Observable } from 'rxjs';
-import { concatMap, expand, filter, map, mergeMap, reduce, shareReplay, take, toArray } from 'rxjs/operators';
+import { concat, EMPTY, from, Observable, of } from 'rxjs';
+import {
+  concatMap,
+  expand,
+  filter,
+  map,
+  mergeMap,
+  reduce,
+  shareReplay,
+  take,
+  toArray,
+  tap,
+  concatAll
+} from 'rxjs/operators';
 import { addToCache, cacheHas, getFromCache, initCache } from '../utils/cache';
 import { Film, FilmsRoot } from './FilmsRoot.interface';
 import { PeopleRoot, Person } from './PeopleRoot.interface';
@@ -11,6 +23,8 @@ import { PeopleRoot, Person } from './PeopleRoot.interface';
   providedIn: 'root'
 })
 export class SwapiService {
+  baseUrl = `https://swapi.co/api/`;
+  swapiRoot: SwapiRoot;
   // Get a page of people
   //   next?: any; // url of next page (if there is one)
   //   results: People;
@@ -28,7 +42,7 @@ export class SwapiService {
 
   // load all people form the paged API
   // start off with loading the first page.
-  swPeople$ = from(this.load<PeopleRoot>(`https://swapi.co/api/people/`)).pipe(
+  swPeople$ = from(this.load<PeopleRoot>(`${this.baseUrl}people/`)).pipe(
     // expand to get additional pages
     // hint: r.next means there's another page
     expand(r => (r.next ? this.load(r.next) : EMPTY)),
@@ -59,9 +73,15 @@ export class SwapiService {
       take(1)
     );
 
-  swFilms$ = from(this.load<FilmsRoot>('https://swapi.co/api/films/')).pipe(
+  swFilms$ = from(this.load<FilmsRoot>(`${this.baseUrl}films/`)).pipe(
     shareReplay(1)
   );
+
+  getAllPagedData(url): Observable<any> {
+    return from(this.load(`${url}`)).pipe(
+      expand(r => (r['next'] ? this.load(r['next']) : EMPTY))
+    );
+  }
 
   findFilmByUrl = (url: string): Observable<Film> =>
     this.swFilms$.pipe(
@@ -88,7 +108,40 @@ export class SwapiService {
       )
     );
 
-  constructor(/*private http: HttpClient*/) {}
+  constructor(/*private http: HttpClient*/) {
+    this.loadData();
+  }
+
+  /**
+   * Load an item from SWAPI using its url. uses local buffer first.
+   * @param url
+   */
+  get<T>(url: string): Observable<T> {
+    const base = Object.values(this.swapiRoot).find(top =>
+      url.toLowerCase().includes(url.toLowerCase())
+    );
+
+    if (base) {
+      return this.getAllPagedData(base).pipe(
+        map((baseData: any) => baseData.results.find(row => row.url === url))
+      );
+    }
+    return from(this.load(url) as Promise<T>);
+  }
+
+  /** load everything from the SWAPI.co into indexedDB */
+  loadData() {
+    from(this.load(this.baseUrl))
+      .pipe(
+        tap(swapiRoot => (this.swapiRoot = this.swapiRoot)),
+        concatMap(r => Object.values(r).map(url => this.getAllPagedData(url))),
+        concatAll(),
+        toArray(),
+        /** log result */
+        tap(r => console.log(r))
+      )
+      .subscribe();
+  }
 
   findWithName = (name: string) =>
     this.swPeople$.pipe(
@@ -105,4 +158,13 @@ function getRandomDateInPast() {
   const month = Math.floor(Math.random() * 12);
   const day = Math.ceil(Math.random() * 27);
   return new Date(year, month, day, 12, 0);
+}
+
+export interface SwapiRoot {
+  people: string;
+  planets: string;
+  films: string;
+  species: string;
+  vehicles: string;
+  starships: string;
 }
