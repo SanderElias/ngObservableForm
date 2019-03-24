@@ -20,7 +20,6 @@ import { findNewDirectives } from './findDirectives';
 import { FormObservables } from './FormObservables.interface';
 import { gatherFormObservables } from './gatherFormObservables';
 import { transformFormObervers } from './transformFormObervers';
-import { promise } from 'protractor';
 
 const enum DataType {
   array,

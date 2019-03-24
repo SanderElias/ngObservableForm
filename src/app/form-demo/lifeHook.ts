@@ -1,11 +1,10 @@
-import { ComponentDef } from '@angular/core/src/render3';
 import { Observable, Subject } from 'rxjs';
-// import { ComponentDef, getHostElement } from '@angular/core/src/render3';
 import { first } from 'rxjs/operators';
 import {
   ɵmarkDirty,
   ɵNG_COMPONENT_DEF as NG_COMPONENT_DEF,
-  ɵLifecycleHooksFeature
+  ɵLifecycleHooksFeature,
+  ɵComponentDef as ComponentDef
 } from '@angular/core';
 export const MONKEY_PATCH_KEY_NAME = '__ngContext__';
 

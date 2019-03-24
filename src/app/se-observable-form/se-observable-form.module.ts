@@ -5,7 +5,6 @@ import { ObservableFormDirective } from './form/observable-form.directive';
 import { FillFormDirective } from './fill/fill-form.directive';
 import { FillFormArrDirective } from './fill/fill-form-arr.directive';
 import { OfSubSetDirective } from './form/of-sub-set.directive';
-import { disconnect } from 'cluster';
 
 const declarations = [
   InputNameDirective,

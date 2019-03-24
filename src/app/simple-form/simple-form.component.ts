@@ -1,9 +1,8 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
-import { concat } from 'rxjs';
-import { map, mergeMap, shareReplay, tap, toArray, flatMap, combineLatest, concatMap } from 'rxjs/operators';
+import { map, shareReplay, tap, toArray } from 'rxjs/operators';
 import { Person } from '../PeopleRoot.interface';
 import { SwapiService } from '../swapi.service';
-import { T_HOST } from '@angular/core/src/render3/interfaces/view';
+// import { T_HOST } from '@angular/core/src/render3/interfaces/view';
 
 @Component({
   selector: 'app-simple-form',

@@ -4,7 +4,6 @@ import {
   ɵgetLContext as getLContext,
   ɵmarkDirty as markDirty
 } from '@angular/core';
-import {} from '@angular/core/src/render3';
 import { concat, Observable, of } from 'rxjs';
 import { first, switchMap, tap } from 'rxjs/operators';
 import { getHookObservable } from './lifeHook';
