@@ -11,10 +11,11 @@ import { SimpleFormComponent } from './simple-form/simple-form.component';
 
 
 const routes: Routes = [
-  { path: '', component: FormDemoComponent },
+  { path: 'formDemo', component: FormDemoComponent },
+  { path: 'lifeHook', component: LifeHookDemoComponent},
   { path: 'simple', component: SimpleFormComponent },
   { path: 'simple/:id', component: SimpleFormComponent },
-  // { path: '**', redirectTo: '' }
+  { path: '**', redirectTo: 'simple' }
 ];
 
 @NgModule({
@@ -33,7 +34,7 @@ const routes: Routes = [
     SeObservableFormModule
   ],
   providers: [],
-  // bootstrap: [AppComponent],
+  bootstrap: [AppComponent],
 })
 export class AppModule {}
 

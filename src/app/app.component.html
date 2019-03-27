@@ -1,7 +1,38 @@
 <nav>
-  <span>Main nav</span>
+  <a [routerLink]="['/simple']" routerLinkActive="router-link-active" >Simple Form</a>
+  <a [routerLink]="['/formDemo']" routerLinkActive="router-link-active" >Demo Form</a>
+  <a [routerLink]="['/life-hook']" routerLinkActive="router-link-active" >Life-Hook</a>
 </nav>
-<!-- <router-outlet></router-outlet> -->
+<router-outlet></router-outlet>
 
 
-<app-simple-form></app-simple-form>
+<!-- <app-simple-form></app-simple-form> -->
+<style>
+  router-outlet {
+    display:none;
+  }
+
+  nav {
+    display: flex;
+    flex-direction: row;
+    margin:5px;
+  }
+
+  nav a {
+    text-decoration: none;
+    text-align: center;
+    display:block;
+    padding-top: 5px;
+    width: 160px;
+    height: 30px;
+    padding-left: 20px;
+    padding-right: 20px;
+    border-radius: 20px;
+    background-color: darkmagenta;
+    color:mintcream;
+  }
+
+  nav a.router-link-active {
+    background-color: blueviolet
+  }
+</style>
