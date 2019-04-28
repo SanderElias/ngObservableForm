@@ -35,7 +35,7 @@ export const onInit = <T extends Constructor>(base: T = class {} as T)  =>
   selector: 'app-life-hook-demo',
   template: `
     <ul>
-      <li *ngFor="let item of showHook$ | async">{{ item }}</li>
+      <li *ngFor="let item of showHooks$ | async">{{ item }}</li>
     </ul>
   `,
   styleUrls: ['./life-hook-demo.component.css']

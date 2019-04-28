@@ -41,7 +41,7 @@ export class ObservableFormDirective implements OnInit, AfterContentInit, AfterV
   @ContentChildren(OfSubSetDirective, { descendants: true })
   private subsets: QueryList<InputNameDirective>;
   // tslint:disable-next-line:no-output-rename
-  @Output('observable') private exposeForm = new EventEmitter<Observable<any>>();
+  @Output('observable') exposeForm = new EventEmitter<Observable<any>>();
 
   // tslint:disable-next-line:no-output-rename
   @Output() save = new EventEmitter();

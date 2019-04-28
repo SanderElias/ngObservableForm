@@ -67,7 +67,7 @@ input:required:valid {
 
 form, fieldset {
   display: grid;
-  grid-template-columns: 80px 250px;
+  grid-template-columns: 80px 350px;
   grid-auto-rows: auto;
   grid-row-gap: 8px;
   background-color: #e7dff5;
