@@ -8,14 +8,16 @@ import { FormDemoComponent } from './form-demo/form-demo.component';
 import { LifeHookDemoComponent } from './life-hook-demo/life-hook-demo.component';
 import { SeObservableFormModule } from './se-observable-form/se-observable-form.module';
 import { SimpleFormComponent } from './simple-form/simple-form.component';
+import { ObservableFormComponent } from './observable-form/observable-form.component';
 
 
 const routes: Routes = [
   { path: 'formDemo', component: FormDemoComponent },
+  { path: 'observable', component: ObservableFormComponent },
   { path: 'lifeHook', component: LifeHookDemoComponent},
   { path: 'simple', component: SimpleFormComponent },
   { path: 'simple/:id', component: SimpleFormComponent },
-  { path: '**', redirectTo: 'simple' }
+  { path: '**', redirectTo: 'observable' }
 ];
 
 @NgModule({
@@ -23,7 +25,8 @@ const routes: Routes = [
     AppComponent,
     FormDemoComponent,
     LifeHookDemoComponent,
-    SimpleFormComponent
+    SimpleFormComponent,
+    ObservableFormComponent
 
   ],
   imports: [

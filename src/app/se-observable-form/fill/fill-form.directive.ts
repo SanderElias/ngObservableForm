@@ -139,7 +139,7 @@ export function fillFormElement(target: HTMLFormElement, val: any) {
         console.warn(`
 
            --------------------------------------------------------
-             Using a Number input ${target.name} for non-number value:"${val}"
+             Using a Number input name "${target.name}" for non-number value:"${val}"
            --------------------------------------------------------
 
       `);

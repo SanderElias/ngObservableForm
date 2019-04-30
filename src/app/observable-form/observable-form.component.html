@@ -20,32 +20,6 @@
   <label>Date</label>
   <input type="date" name="date" />
 
-  <!-- <label>Films</label>
-  <section>
-    <ng-container *ffArray="let row fromProperty 'films'">
-      <input type="text" style='width: 93%' name='title'>
-
-    </ng-container>
-  </section> -->
-
-  <label> subFields</label>
-  <fieldset *of-name="'sibling'">
-    <legend>Sibling</legend>
-    <label>Name</label>
-    <input type="text" name="name" minlength="2"   />
-    <label>Mass</label>
-    <input type="number" name="mass" />
-
-    <fieldset *of-name="'child'">
-      <legend>Child</legend>
-      <label>Name</label>
-      <input type="text" name="name" minlength="2"   />
-      <label>Eye color</label>
-      <input type="text" name="eye_color" />
-    </fieldset>
-
-  </fieldset>
-
   <label>Gender</label>
   <section>
     <label> <input type="radio" name="gender" value="female" /> Female</label>
@@ -54,6 +28,8 @@
 
     <label> <input type="radio" name="gender" value="n/a" /> Unknown</label>
   </section>
-  <div class="buttons"><button type="submit">Save</button> <button type="reset">Cancel</button></div>
+  <div class="buttons">
+    <button type="submit">Save</button> <button type="reset">Cancel</button>
+  </div>
 </form>
 <div class="backDrop" *ngIf="!person"><h2>Loading</h2></div>

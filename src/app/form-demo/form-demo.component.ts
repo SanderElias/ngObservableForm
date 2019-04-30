@@ -1,8 +1,9 @@
 import { Component, ViewEncapsulation, ContentChildren } from '@angular/core';
 import { Observable, of } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { tap, debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { FetchFormObservable } from './FetchFormObservable';
 import { ObservableFormDirective } from '../se-observable-form/form/observable-form.directive';
+import { dropUndefined } from '../simple-form/dropUndefined';
 
 const sampleData = {
   name: 'Sander Elias',
@@ -12,7 +13,7 @@ const sampleData = {
   volume: 80,
   favoredChoc: 'milk',
   birth: new Date('2018-08-12T00:00:00.000Z'),
-  phone: '624771946',
+  phone: '62135467',
   desc: 'Blah\n\nBlah\nDont know.',
   option: 'Option 2.2',
   weight: 88
@@ -24,7 +25,7 @@ const sampleData = {
   styleUrls: ['./form-demo.component.css'],
   encapsulation: ViewEncapsulation.None
 })
-export class FormDemoComponent {
+export class FormDemoComponent implements OnInit {
   @FetchFormObservable() formData$: Observable<any>;
 
   // @ContentChildren(ObservableFormDirective) ObservableForms;
@@ -50,6 +51,14 @@ export class FormDemoComponent {
     .subscribe();
 
   constructor() {}
+
+  ngOnInit() {
+    /** for demo purposes, list all updates */
+    this.formData$.pipe(
+      debounceTime(500),
+      distinctUntilChanged(),
+    ).subscribe(data => console.log(dropUndefined(data)));
+  }
 
   doSave(ev: Event) {
     ev.preventDefault();
