@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { shareReplay, tap, delay } from 'rxjs/operators';
-import { Person } from 'src/app/PeopleRoot';
 import { SwapiService } from 'src/app/swapi.service';
+import { Person } from 'src/app/PeopleRoot.interface';
 
 @Component({
   selector: 'app-ng-model-form',

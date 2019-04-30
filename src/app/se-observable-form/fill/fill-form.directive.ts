@@ -20,26 +20,22 @@ declare var ng: any;
 })
 export class FillFormDirective
   implements OnInit, AfterViewInit, AfterContentInit, OnDestroy {
-  private afterView$ = new Subject<void>();
-  private afterContent$ = new Subject<void>();
+  private afterView$ = new ReplaySubject<void>();
+  private afterContent$ = new ReplaySubject<void>();
   private form: HTMLFormElement;
   fillForm: { [key: string]: any };
   formDataSub = new ReplaySubject(1);
   formData$ = this.formDataSub.pipe(
     tap(data => {
+      // console.log('ff in tap', data);
       /**
        * I need to promise to take it to the end of the que
        * bcs the setup of the component is not done yet.
        */
       Promise.resolve().then(() => this.updateForm(data));
+      // setTimeout(() => this.updateForm(data), 4);
     })
   );
-
-  @Input('fillForm') set _ffillForm(data: { [key: string]: any }) {
-    if (data) {
-      this.formDataSub.next(data);
-    }
-  }
 
   formFiller$ = concat(
     this.afterView$,
@@ -54,24 +50,33 @@ export class FillFormDirective
 
   private formSub = this.formFiller$.subscribe();
 
+  @Input('fillForm') set _ffillForm(data: { [key: string]: any }) {
+    if (data) {
+      // console.log('ff input', data);
+      this.formDataSub.next(data);
+      /** I need this line to start off the thing, This is to work around a bug somewhere */
+      setTimeout(async () => await this.formData$.pipe(take(1)).toPromise(), 0);
+    }
+  }
   constructor() {
     // console.log(this.constructor)
   }
 
   /** reset the form */
   @HostListener('reset', ['$event'])
-  private async resetForn(ev) {
-    const data = this.formData$.pipe(take(1)).toPromise();
+  private async resetForm(ev) {
+    const data = await this.formData$.pipe(take(1)).toPromise();
     /**
      * the timout is needed to make sure the form is
      * filled after the DOM event cleared it.
      */
-    setTimeout(() => this.updateForm(data), 5);
+    setTimeout(() => this.updateForm(data), 1);
   }
 
   /** update the form  with the current entries */
   private updateForm(data) {
-    // for now this is ran just one, afer init.
+    // console.log('updateForm called with ', data);
+    // for now this is ran just one, after init.
     // I might add diffing later on, so we can update the form's values from the source.
     [...Object.entries(data)].forEach(this.fillEntry.bind(this));
   }

@@ -1,5 +1,5 @@
 import { Component, ViewEncapsulation, ContentChildren } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { FetchFormObservable } from './FetchFormObservable';
 import { ObservableFormDirective } from '../se-observable-form/form/observable-form.directive';
@@ -35,7 +35,7 @@ export class FormDemoComponent {
 
   formSub = this.formData$
     .pipe(
-      /** assign data to local properie for easy access */
+      /** assign data to local properties for easy access */
       tap(data => (this.updates = data)),
       /** silly sample, calculate the change rate */
       tap(

@@ -57,7 +57,7 @@ export function getHookObservable(
   hookList[ref] = new Subject<void>();
   // patch the life-cycle hook, so it fires off the subject.
   cdef[ref] = function onInit() {
-    console.log(`fire hook ${ref} of ${target.constructor.name}`);
+    // console.log(`fire hook ${ref} of ${target.constructor.name}`);
     // schedule a microtask to push this to the end of execution
     Promise.resolve().then(() => hookList[ref].next());
     // tslint:disable-next-line:no-unused-expression

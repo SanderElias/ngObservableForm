@@ -10,6 +10,6 @@ export function transformFormObervers(formObservables: FormObservables) {
       /** reduce it back to a json-like data structure */
       Object.keys(formObservables).reduce((t, key, i) => ({ ...t, [key]: results[i] }), {})
     ),
-    tap(res => console.log(res))
+    // tap(res => console.log(res))
   );
 }

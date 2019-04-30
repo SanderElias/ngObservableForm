@@ -13,7 +13,8 @@ import {
   take,
   toArray,
   tap,
-  concatAll
+  concatAll,
+  observeOn
 } from 'rxjs/operators';
 import { addToCache, cacheHas, getFromCache, initCache } from '../utils/cache';
 import { Film, FilmsRoot } from './FilmsRoot.interface';
@@ -136,9 +137,9 @@ export class SwapiService {
         tap(swapiRoot => (this.swapiRoot = this.swapiRoot)),
         concatMap(r => Object.values(r).map(url => this.getAllPagedData(url))),
         concatAll(),
-        toArray(),
+        toArray()
         /** log result */
-        tap(r => console.log(r))
+        // tap(r => console.log(r))
       )
       .subscribe();
   }
