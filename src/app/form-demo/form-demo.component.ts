@@ -1,13 +1,12 @@
-import { Component, ViewEncapsulation, ContentChildren } from '@angular/core';
-import { Observable, of } from 'rxjs';
-import { tap, debounceTime, distinctUntilChanged } from 'rxjs/operators';
-import { FetchFormObservable } from './FetchFormObservable';
-import { ObservableFormDirective } from '../se-observable-form/form/observable-form.directive';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { Observable } from 'rxjs';
+import { debounceTime, distinctUntilChanged, tap } from 'rxjs/operators';
 import { dropUndefined } from '../simple-form/dropUndefined';
+import { FetchFormObservable } from './FetchFormObservable';
 
 const sampleData = {
   name: 'Sander Elias',
-  email: 'sanderelias@gmail.com',
+  email: 'ThisIs@not.me',
   terms: true,
   contact: 'phone',
   volume: 80,
@@ -16,7 +15,7 @@ const sampleData = {
   phone: '62135467',
   desc: 'Blah\n\nBlah\nDont know.',
   option: 'Option 2.2',
-  weight: 88
+  weight: 75
 };
 
 @Component({

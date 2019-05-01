@@ -23,14 +23,14 @@ export class ShowReactiveFormComponent implements OnInit {
 
   loadFG(person: Person) {
     this.personFG = new FormGroup({
-      name: new FormControl(person.name),
-      eye_color: new FormControl(person.eye_color),
+      name:       new FormControl(person.name),
+      eye_color:  new FormControl(person.eye_color),
       hair_color: new FormControl(person.hair_color),
       birth_year: new FormControl(person.birth_year),
-      mass: new FormControl(person.mass),
-      height: new FormControl(person.height),
-      date: new FormControl(person.date),
-      gender: new FormControl(person.gender)
+      mass:       new FormControl(person.mass),
+      height:     new FormControl(person.height),
+      date:       new FormControl(person.date),
+      gender:     new FormControl(person.gender)
     });
   }
 
@@ -53,3 +53,6 @@ export class ShowReactiveFormComponent implements OnInit {
     console.log('saving', JSON.stringify(toSave, null, 4));
   }
 }
+
+
+

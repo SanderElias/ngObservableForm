@@ -17,7 +17,7 @@ export class NgModelFormComponent implements OnInit {
     tap(person => (this.person = person)),
     /** need to make a shallow copy to be able to diff later on */
     tap(person => (this.editPerson = { ...person })),
-    shareReplay(1),
+    shareReplay(1)
   );
 
   constructor(private swapi: SwapiService, private cdr: ChangeDetectorRef) {}
