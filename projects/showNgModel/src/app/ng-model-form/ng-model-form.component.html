@@ -1,0 +1,33 @@
+<form (ngSubmit)="doSave()" *ngIf="person">
+  <label>Name</label>
+  <input type="text" [(ngModel)]="editPerson.name" name="personname" minlength="2" required autofocus />
+
+  <label>Eye color</label>
+  <input type="text" [(ngModel)]="editPerson.eye_color" name="eye_color" />
+
+  <label>Hair color</label>
+  <input type="text" [(ngModel)]="editPerson.hair_color" name="hair_color" />
+
+  <label>Birth year</label>
+  <input type="text" [(ngModel)]="editPerson.birth_year" name="birth_year" />
+
+  <label>Mass</label>
+  <input type="number" [(ngModel)]="editPerson.mass" name="mass" />
+
+  <label>Height</label>
+  <input type="number" [(ngModel)]="editPerson.height" name="height" />
+
+  <label>Date</label>
+  <input type="date" [(ngModel)]="editPerson.date" name="date" />
+
+  <label>Gender</label>
+  <section>
+    <label> <input type="radio" [(ngModel)]="editPerson.gender" name="gender" value="female" /> Female</label>
+    <label> <input type="radio" [(ngModel)]="editPerson.gender" name="gender" value="male" /> Male</label>
+    <label> <input type="radio" [(ngModel)]="editPerson.gender" name="gender" value="n/a" /> Unknown</label>
+  </section>
+  <div class="buttons">
+    <button type="submit">Save</button> <button type="reset">Cancel</button>
+  </div>
+</form>
+<div class="backDrop" *ngIf="!person"><h2>Loading</h2></div>

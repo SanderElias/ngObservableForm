@@ -1,4 +1,4 @@
-<form (submit)='doSave($event)' (observable)='assignForm($event)' [fillForm]="sample">
+<form (submit)='doSave($event)' observable [fillForm]="sample">
 
    <!-- <input type="text" [value]="'somestring'" (input)="handleIt($event.target.value">  -->
   <label>Name</label>
@@ -38,7 +38,7 @@
     <option value="dark"></option>
   </datalist>
 
-  <label>Birthdate</label>
+  <label>Birthday</label>
   <input type="date" name="birth">
 
   <label>Phone</label>
@@ -63,18 +63,18 @@
     </optgroup>
   </select>
 
-  <label>weigth</label>
-  <input type="number" name="weigth">
+  <label>weight</label>
+  <input type="number" name="weight">
 
-  <label>Done:</label>
-  <progress [value]="this.progress" max="100">{{this.progress}} %</progress>
+  <label>Change ratio:</label>
+  <progress [value]="this.changedRatio" max="100">{{this.changedRatio}} %</progress>
 
-  <div>
+  <div class="buttons">
     <button type='submit'>Save</button>
     <button type='reset'>Cancel</button>
   </div>
 </form>
 
 <article>
-  <!-- <pre><code>{{formData$|async|json:true}}</code></pre> -->
+  <!-- <pre><code>{{formData$|async|json}}</code></pre> -->
 </article>

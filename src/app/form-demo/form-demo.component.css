@@ -15,11 +15,11 @@ p {
 
 form {
   display: grid;
-  grid-template-columns: 80px 250px;
+  grid-template-columns: 80px 350px;
   grid-auto-rows: auto;
   grid-row-gap: 8px;
   background-color: #e7dff5;
-  width:330px;
+  width:450px;
   padding:10px;
   margin-left: 2em;
   border-radius: 15px;

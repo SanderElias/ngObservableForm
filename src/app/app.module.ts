@@ -1,24 +1,43 @@
-import { BrowserModule } from '@angular/platform-browser';
+import { CommonModule } from '@angular/common';
+import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
-
+import { BrowserModule } from '@angular/platform-browser';
+import { RouterModule, Routes } from '@angular/router';
 import { AppComponent } from './app.component';
 import { FormDemoComponent } from './form-demo/form-demo.component';
-import { InputNameDirective } from './observableForm/input-name.directive';
-import { ObservableFormDirective } from './observableForm/observable-form.directive';
-import { FillFormDirective } from './observableForm/fill-form.directive';
+import { LifeHookDemoComponent } from './life-hook-demo/life-hook-demo.component';
+import { SeObservableFormModule } from './se-observable-form/se-observable-form.module';
+import { SimpleFormComponent } from './simple-form/simple-form.component';
+import { ObservableFormComponent } from './observable-form/observable-form.component';
+
+
+const routes: Routes = [
+  { path: 'formDemo', component: FormDemoComponent },
+  { path: 'observable', component: ObservableFormComponent },
+  { path: 'lifeHook', component: LifeHookDemoComponent},
+  { path: 'simple', component: SimpleFormComponent },
+  { path: 'simple/:id', component: SimpleFormComponent },
+  { path: '**', redirectTo: 'observable' }
+];
 
 @NgModule({
   declarations: [
     AppComponent,
     FormDemoComponent,
-    InputNameDirective,
-    ObservableFormDirective,
-    FillFormDirective
+    LifeHookDemoComponent,
+    SimpleFormComponent,
+    ObservableFormComponent
+
   ],
   imports: [
-    BrowserModule
+    CommonModule,
+    RouterModule.forRoot(routes),
+    BrowserModule,
+    HttpClientModule,
+    SeObservableFormModule
   ],
   providers: [],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}
+
