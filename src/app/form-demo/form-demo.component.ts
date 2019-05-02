@@ -27,8 +27,6 @@ const sampleData = {
 export class FormDemoComponent implements OnInit {
   @FetchFormObservable() formData$: Observable<any>;
 
-  // @ContentChildren(ObservableFormDirective) ObservableForms;
-
   changedRatio = 0;
   sample = sampleData;
   updates = {};
@@ -59,13 +57,7 @@ export class FormDemoComponent implements OnInit {
     ).subscribe(data => console.log(dropUndefined(data)));
   }
 
-  doSave(ev: Event) {
-    ev.preventDefault();
-
-    const changes = Object.entries(this.updates)
-      .filter(([key, val]) => val)
-      .reduce((r, [key, val]) => ({ ...r, [key]: val }), {});
-
+  doSave(changes) {
     console.log('formData', changes);
   }
 }

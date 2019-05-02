@@ -1,6 +1,6 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component } from '@angular/core';
+import { shareReplay, tap } from 'rxjs/operators';
 import { Person } from '../PeopleRoot.interface';
-import { toArray, map, tap, shareReplay } from 'rxjs/operators';
 import { SwapiService } from '../swapi.service';
 
 @Component({
@@ -16,7 +16,7 @@ export class ObservableFormComponent {
     shareReplay(1)
   );
 
-  constructor(private swapi: SwapiService, private cdr: ChangeDetectorRef) {}
+  constructor(private swapi: SwapiService) {}
 
   doSave(formdata) {
     const toSave = { ...formdata, id: this.person.id };
