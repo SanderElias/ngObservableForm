@@ -1,6 +1,6 @@
 # seObservableForm
 
-ngObservableForm is an alternative form module for angular.
+seObservableForm is an alternative form module for angular.
 Key reasons for choosing this module.
 
 1. Reduce complexity around forms
@@ -10,22 +10,48 @@ Key reasons for choosing this module.
 5. Native HTML form elements.
 6. Exposes the forms data as an observable stream
 
+## Sample
+
 ![sample](./documentation/assets/sample1.png)
 
 
 ```HTML
-<form (save)="doSave($event)" observable [fillForm]="someObject">
+<form (save)="doSave($event)" observable [fillForm]="person$ | async">
   <label>Name</label>
   <input type="text" name="name" minlength="2" required autofocus />
+
+  <label>Eye color</label>
+  <input type="text" name="eye_color" />
 
   <label>Hair color</label>
   <input type="text" name="hair_color" />
 
+  <label>Birth year</label>
+  <input type="text" name="birth_year" />
+
+  <label>Mass</label>
+  <input type="number" name="mass" />
+
+  <label>Height</label>
+  <input type="number" name="height" />
+
   <label>Date</label>
   <input type="date" name="date" />
+
+  <label>Gender</label>
+  <section>
+    <label> <input type="radio" name="gender" value="female" /> Female</label>
+    <label> <input type="radio" name="gender" value="male" /> Male</label>
+    <label> <input type="radio" name="gender" value="n/a" /> Unknown</label>
+  </section>
   <div class="buttons">
     <button type="submit">Save</button> <button type="reset">Reset</button>
   </div>
 </form>
+<div class="backDrop" *ngIf="!person"><h2>Loading</h2></div>
 ```
 
+## Installation
+
+For now, copy the `src/app/se-observable-form` into your project, and add the `SeObservableFormModule` to the `imports` array of your `app.module`. 
+Soon I will publish the module to NPM
