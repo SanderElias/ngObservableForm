@@ -14,7 +14,7 @@ Key reasons for choosing this module.
 
 ![sample](./documentation/assets/sample1.png)
 
-
+### Template:
 ```HTML
 <form (save)="doSave($event)" observable [fillForm]="person$ | async">
   <label>Name</label>
@@ -49,6 +49,19 @@ Key reasons for choosing this module.
   </div>
 </form>
 <div class="backDrop" *ngIf="!person"><h2>Loading</h2></div>
+```
+
+### Controller:
+```typescript
+export class DemoComponent {
+  person$ = this.http.get('https://swapi.co/api/people/28')
+  
+  constructor(private http: HttpClient) {}
+
+  doSave(formData) {
+    console.log('Changes',formData);
+  }
+}
 ```
 
 ## Installation
