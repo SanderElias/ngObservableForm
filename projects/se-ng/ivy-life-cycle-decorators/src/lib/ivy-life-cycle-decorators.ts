@@ -3,8 +3,6 @@ import {Observable, Subject} from 'rxjs';
 import {first} from 'rxjs/operators';
 export const MONKEY_PATCH_KEY_NAME = '__ngContext__';
 
-declare var ng: any;
-
 const AvailableHooks = Symbol('seHooks');
 interface AvailableHooks {
   onInit: Observable<void>;
