@@ -1,7 +1,7 @@
-import { Component } from '@angular/core';
-import { combineLatest, Observable } from 'rxjs';
-import { map, takeUntil, tap } from 'rxjs/operators';
-import { LifeCycleHook } from '../form-demo/lifeHook';
+import {Component} from '@angular/core';
+import {LifeCycleHook} from '@se-ng/ivy-life-cycle-decorators';
+import {combineLatest, Observable} from 'rxjs';
+import {map, takeUntil, tap} from 'rxjs/operators';
 
 @Component({
   selector: 'app-life-hook-demo',

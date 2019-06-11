@@ -2,9 +2,22 @@
 
 A typescript decorator to be able to use Angular life-cycle hooks in an observable way. Works with Ivy only.
 
+
+to use the library do:
+
+```bash
+yarn add @se-ng/ivy-life-cycle-decorators
+```
+
+
 ## Sample:
 
 ```typescript
+import {Component} from '@angular/core';
+import {LifeCycleHook} from '@se-ng/ivy-life-cycle-decorators';
+import {combineLatest, Observable} from 'rxjs';
+import {map, takeUntil, tap} from 'rxjs/operators';
+
 @Component({
   selector: 'app-life-hook-demo',
   template: `
