@@ -1,0 +1,13 @@
+{
+  "name": "@se-ng/ivy-life-cycle-decorators",
+  "version": "0.0.1",
+  "private": false,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/SanderElias/ngObservableForm/tree/master/projects/se-ng/ivy-life-cycle-decorators"
+  },
+  "peerDependencies": {
+    "@angular/core": "^8.0.0",
+    "rxjs": "^6.5.2"
+  }
+}

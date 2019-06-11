@@ -36,6 +36,12 @@ export function LifeCycleHook(ref: keyof AvailableHooks): Function {
 }
 
 /**
+ * A note on ` hookList[ref].pipe(first())`
+ * This takes the subject, and returns a observable that completes after it emits.
+ * The subject itself will be alive until the component is destroyed.
+ * This enables reuse of the same hook multiple times. (Not encouraged!)
+ */
+/**
  *
  * @param target object to examine
  * @param ref name of the hook

@@ -308,6 +308,41 @@
           }
         }
       }
+    },
+    "@se-ng/IvyLifeCycleDecorators": {
+      "projectType": "library",
+      "root": "projects/se-ng/ivy-life-cycle-decorators",
+      "sourceRoot": "projects/se-ng/ivy-life-cycle-decorators/src",
+      "prefix": "lib",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-ng-packagr:build",
+          "options": {
+            "tsConfig": "projects/se-ng/ivy-life-cycle-decorators/tsconfig.lib.json",
+            "project": "projects/se-ng/ivy-life-cycle-decorators/ng-package.json"
+          }
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "projects/se-ng/ivy-life-cycle-decorators/src/test.ts",
+            "tsConfig": "projects/se-ng/ivy-life-cycle-decorators/tsconfig.spec.json",
+            "karmaConfig": "projects/se-ng/ivy-life-cycle-decorators/karma.conf.js"
+          }
+        },
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "projects/se-ng/ivy-life-cycle-decorators/tsconfig.lib.json",
+              "projects/se-ng/ivy-life-cycle-decorators/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**"
+            ]
+          }
+        }
+      }
     }
   },
   "defaultProject": "observableForm"

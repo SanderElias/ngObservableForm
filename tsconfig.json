@@ -17,7 +17,14 @@
     "lib": [
       "es2017",
       "dom"
-    ]
-  },
-
+    ],
+    "paths": {
+      "@se-ng/ivy-life-cycle-decorators": [
+        "dist/se-ng/ivy-life-cycle-decorators"
+      ],
+      "@se-ng/ivy-life-cycle-decorators/*": [
+        "dist/se-ng/ivy-life-cycle-decorators/*"
+      ]
+    }
+  }
 }

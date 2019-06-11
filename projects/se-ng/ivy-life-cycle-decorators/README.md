@@ -1,8 +1,10 @@
-import { Component } from '@angular/core';
-import { combineLatest, Observable } from 'rxjs';
-import { map, takeUntil, tap } from 'rxjs/operators';
-import { LifeCycleHook } from '../form-demo/lifeHook';
+# Ivy Life Cycle Decorators
 
+A typescript decorator to be able to use Angular life-cycle hooks in an observable way. Works with Ivy only.
+
+## Sample:
+
+```typescript
 @Component({
   selector: 'app-life-hook-demo',
   template: `
@@ -26,3 +28,8 @@ export class LifeHookDemoComponent {
     })
   );
 }
+```
+
+## Result:
+
+![sample](./img/sample.png)
