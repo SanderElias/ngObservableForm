@@ -6,10 +6,11 @@ import {
 } from '@angular/core';
 import { concat, Observable, of } from 'rxjs';
 import { first, switchMap, tap } from 'rxjs/operators';
-import { getHookObservable } from './lifeHook';
 import { ObservableFormDirective } from '../se-observable-form/form/observable-form.directive';
+import { getHookObservable } from '@se-ng/ivy-life-cycle-decorators';
 
 export declare var ng: any;
+
 
 export function FetchFormObservable(name?: string): Function {
   return function(target: ComponentDef<any>, propertyKey: string, descriptor: PropertyDescriptor): Observable<void> {

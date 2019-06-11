@@ -14,15 +14,15 @@ interface AvailableHooks {
 }
 /**
  * Will create an observable that fires and completes when the given hook is fired.
- * @param ref Name of the hook
+ * @param hookName Name of the hook
  */
-export function LifeCycleHook(ref: keyof AvailableHooks): Function {
+export function LifeCycleHook(hookName: keyof AvailableHooks): Function {
   // console.log('this', this);
-  return function(target: ComponentDef<any>, propertyKey: string, descriptor: PropertyDescriptor): Observable<void> {
-    const observable = getHookObservable(target, ref);
+  return function(component: ComponentDef<any>, PropertyToAssignObservableTo: string, descriptor: PropertyDescriptor): Observable<void> {
+    const observable = getHookObservable(component, hookName);
     // don't expose the subject, but create a observers that fires once and then completes.
-    target[propertyKey] = observable;
-    return target[propertyKey];
+    component[PropertyToAssignObservableTo] = observable;
+    return component[PropertyToAssignObservableTo];
   };
 }
 
