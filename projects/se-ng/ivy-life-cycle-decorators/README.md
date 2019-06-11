@@ -13,6 +13,11 @@ yarn add @se-ng/ivy-life-cycle-decorators
 
 ## Sample:
 
+### Result
+
+![sample](https://github.com/SanderElias/ngObservableForm/raw/master/projects/se-ng/ivy-life-cycle-decorators/img/sample.png)
+
+### Code
 ```typescript
 import {Component} from '@angular/core';
 import {LifeCycleHook} from '@se-ng/ivy-life-cycle-decorators';
@@ -44,6 +49,3 @@ export class LifeHookDemoComponent {
 }
 ```
 
-## Result:
-
-![sample](./img/sample.png)
