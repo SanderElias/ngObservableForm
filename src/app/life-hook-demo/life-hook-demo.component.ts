@@ -47,10 +47,7 @@ export function MakeObservable(): Function {
     const retour = innerSB.asObservable().pipe(tap(r => Promise.resolve().then(() => undefined)));
     getHookObservable(component, 'onDestroy').subscribe(() => innerSB.complete());
     Object.defineProperty(component, inputName, {
-      set(newValue) {
-        setTimeout(() => innerSB.next(newValue), 0);
-        Promise.resolve();
-      },
+      set: newValue => innerSB.next(newValue),
       get: () => retour,
       enumerable: true,
       configurable: true
