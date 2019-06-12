@@ -14,7 +14,7 @@ import {timeInterval, tap} from 'rxjs/operators';
 export class TimeComponent implements OnInit {
   @MakeObservable() @Input() time: Observable<string>;
 
-  constructor(private cd: ChangeDetectorRef) {}
+  constructor() {}
 
   ngOnInit() {}
 }
