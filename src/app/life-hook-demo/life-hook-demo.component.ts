@@ -44,14 +44,14 @@ export class LifeHookDemoComponent {
 export function MakeObservable(): Function {
   return function(component: ComponentDef<any>, inputName: string, descriptor: PropertyDescriptor): Observable<any> {
     const innerSB = new Subject();
+    const retour = innerSB.asObservable().pipe(tap(r => Promise.resolve().then(() => undefined)));
     getHookObservable(component, 'onDestroy').subscribe(() => innerSB.complete());
     Object.defineProperty(component, inputName, {
       set(newValue) {
-        innerSB.next(newValue);
+        setTimeout(() => innerSB.next(newValue), 0);
+        Promise.resolve();
       },
-      get() {
-        return innerSB.asObservable().pipe(tap(r => console.log('getting', r)));
-      },
+      get: () => retour,
       enumerable: true,
       configurable: true
     });

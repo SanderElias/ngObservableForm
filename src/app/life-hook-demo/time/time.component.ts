@@ -6,7 +6,7 @@ import {timeInterval, tap} from 'rxjs/operators';
 @Component({
   selector: 'app-time',
   template: `
-    <p>time works! {{ time$ | async }}</p>
+    <p>time works! {{ time | async }}</p>
   `,
   styles: [],
   // changeDetection: ChangeDetectionStrategy.OnPush
@@ -14,8 +14,6 @@ import {timeInterval, tap} from 'rxjs/operators';
 export class TimeComponent implements OnInit {
   // tslint:disable-next-line: no-input-rename
   @MakeObservable() @Input() time: Observable<string>;
-
-  time$ = this.time.pipe(tap(() => this.cd.markForCheck()))
 
   constructor(private cd: ChangeDetectorRef) {}
 
