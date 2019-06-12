@@ -9,6 +9,7 @@ import { LifeHookDemoComponent } from './life-hook-demo/life-hook-demo.component
 import { SeObservableFormModule } from './se-observable-form/se-observable-form.module';
 import { SimpleFormComponent } from './simple-form/simple-form.component';
 import { ObservableFormComponent } from './observable-form/observable-form.component';
+import { TimeComponent } from './life-hook-demo/time/time.component';
 
 
 const routes: Routes = [
@@ -26,7 +27,8 @@ const routes: Routes = [
     FormDemoComponent,
     LifeHookDemoComponent,
     SimpleFormComponent,
-    ObservableFormComponent
+    ObservableFormComponent,
+    TimeComponent
 
   ],
   imports: [
