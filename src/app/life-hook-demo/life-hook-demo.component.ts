@@ -18,7 +18,7 @@ export class LifeHookDemoComponent {
   @LifeCycleHook('onDestroy') destroy$: Observable<void>;
 
   showHooks$ = combineLatest([this.init$, this.av$]).pipe(
-    map(([init]) => ['Init hook fired', 'After view hook fired']),
+    map(() => ['Init hook fired', 'After view hook fired']),
     takeUntil(this.destroy$),
     tap({
       next: r => console.log(r),

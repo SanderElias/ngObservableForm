@@ -3,6 +3,9 @@
 Beta notice: This lib is considered beta, until Ivy is the primary renderer in Angular
 A typescript decorator to be able to use Angular life-cycle hooks in an observable way. Works with Ivy only.
 
+Those life-cycle observables will make the reactive way of programming a lot easier. There is no more need to manually create an subject. For a quick before/after comparison, I added the sample in a 'before' state at the end of the document.
+
+
 
 to use the library do:
 
@@ -39,7 +42,7 @@ export class LifeHookDemoComponent {
   @LifeCycleHook('onDestroy') destroy$: Observable<void>;
 
   showHooks$ = combineLatest([this.init$, this.av$]).pipe(
-    map(([init]) => ['Init hook fired', 'After view hook fired']),
+    map(() => ['Init hook fired', 'After view hook fired']),
     takeUntil(this.destroy$),
     tap({
       next: r => console.log(r),
@@ -49,3 +52,49 @@ export class LifeHookDemoComponent {
 }
 ```
 
+This libray has support for the following hooks:
+```typescript
+interface AvailableHooks {
+  afterContentChecked: Observable<void>;
+  afterContentInit: Observable<void>;
+  AfterViewChecked: Observable<void>;
+  afterViewInit: Observable<void>;
+  doCheck: Observable<void>;
+  onChanges: Observable<SimpleChanges>;
+  onDestroy: Observable<void>;
+  onInit: Observable<void>;
+}
+```
+
+The hooks that fire once, will complete directly after invocation. The other hooks will complete when the components gets destroyed. 
+
+### The same sample without `@LifeCycleHook` decorator
+
+```typescript
+export class Before implements OnInit, AfterViewInit, OnDestroy {
+  private init$ = new Subject<void>();
+  private av$ = new Subject<void>();
+  private destroy$ = new Subject<void>();
+
+  showHooks$ = combineLatest([this.init$, this.av$]).pipe(
+    map(() => ['Init hook fired', 'After view hook fired']),
+    takeUntil(this.destroy$),
+    tap({
+      next: r => console.log(r),
+      complete: () => console.log('Completed')
+    })
+  );
+
+  ngOnInit() {
+    this.init$.next();
+  }
+  ngAfterViewInit() {
+    this.av$.next();
+  }
+  ngOnDestroy() {
+    this.destroy$.next();
+  }
+}
+```
+
+Also note, that the  `@LifeCycleHook` decorator will expose observables, not subjects. 
