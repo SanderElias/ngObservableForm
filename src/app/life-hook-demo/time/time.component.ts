@@ -9,10 +9,9 @@ import {timeInterval, tap} from 'rxjs/operators';
     <p>time works! {{ time | async }}</p>
   `,
   styles: [],
-  // changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TimeComponent implements OnInit {
-  // tslint:disable-next-line: no-input-rename
   @MakeObservable() @Input() time: Observable<string>;
 
   constructor(private cd: ChangeDetectorRef) {}
