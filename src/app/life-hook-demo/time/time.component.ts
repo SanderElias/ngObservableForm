@@ -1,7 +1,6 @@
-import {Component, OnInit, ChangeDetectionStrategy, Input, ChangeDetectorRef} from '@angular/core';
-import {MakeObservable} from '../life-hook-demo.component';
-import {Observable} from 'rxjs';
-import {timeInterval, tap} from 'rxjs/operators';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { Observable } from 'rxjs';
+import { MakeObservable } from '../life-hook-demo.component';
 
 @Component({
   selector: 'app-time',
@@ -11,10 +10,6 @@ import {timeInterval, tap} from 'rxjs/operators';
   styles: [],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class TimeComponent implements OnInit {
+export class TimeComponent {
   @MakeObservable() @Input() time: Observable<string>;
-
-  constructor() {}
-
-  ngOnInit() {}
 }

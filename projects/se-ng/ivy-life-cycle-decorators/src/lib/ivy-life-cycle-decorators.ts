@@ -1,6 +1,6 @@
-import {ɵComponentDef as ComponentDef, ɵNG_COMPONENT_DEF as NG_COMPONENT_DEF, SimpleChanges} from '@angular/core';
+import {SimpleChanges, ɵComponentDef as ComponentDef, ɵNG_COMPONENT_DEF as NG_COMPONENT_DEF} from '@angular/core';
 import {Observable, Subject} from 'rxjs';
-import {first, subscribeOn} from 'rxjs/operators';
+import {take} from 'rxjs/operators';
 export const MONKEY_PATCH_KEY_NAME = '__ngContext__';
 
 const AvailableHooks = Symbol('seHooks');
@@ -67,7 +67,8 @@ export function getHookObservable(component: any, hookName: keyof AvailableHooks
     });
   }
   const hookList = component[AvailableHooks] as {[P in keyof AvailableHooks]?: Subject<any>};
-  const returnHook = () =>  hookIsAutoCompleting[hookName] ? hookList[hookName].pipe(first()) : hookList[hookName].asObservable();
+  const returnHook = () =>
+    hookIsAutoCompleting[hookName] ? hookList[hookName].pipe(take(1)) : hookList[hookName].asObservable();
   if (hookList[hookName]) {
     // if the subject is already there, just return it.
     return returnHook();
