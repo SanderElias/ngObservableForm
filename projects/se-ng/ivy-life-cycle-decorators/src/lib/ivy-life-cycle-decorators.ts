@@ -7,7 +7,7 @@ const AvailableHooks = Symbol('seHooks');
 interface AvailableHooks {
   afterContentChecked: Observable<void>;
   afterContentInit: Observable<void>;
-  AfterViewChecked: Observable<void>;
+  afterViewChecked: Observable<void>;
   afterViewInit: Observable<void>;
   doCheck: Observable<void>;
   onChanges: Observable<SimpleChanges>;
@@ -18,7 +18,7 @@ interface AvailableHooks {
 const hookIsAutoCompleting: {[x in keyof AvailableHooks]: boolean} = {
   afterContentChecked: false,
   afterContentInit: true,
-  AfterViewChecked: false,
+  afterViewChecked: false,
   afterViewInit: true,
   doCheck: false,
   onChanges: false,
