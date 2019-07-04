@@ -10,15 +10,18 @@ import { SeObservableFormModule } from './se-observable-form/se-observable-form.
 import { SimpleFormComponent } from './simple-form/simple-form.component';
 import { ObservableFormComponent } from './observable-form/observable-form.component';
 import { TimeComponent } from './life-hook-demo/time/time.component';
+import { ReactiveLifeCycleHooksContainerComponent } from "./life-hook-demo/ReactiveLifeCycleHooksContainerComponent";
+import { ReactiveLifeCycleHooksComponent } from "./life-hook-demo/ReactiveLifeCycleHooksComponent";
 
 
 const routes: Routes = [
   { path: 'formDemo', component: FormDemoComponent },
   { path: 'observable', component: ObservableFormComponent },
   { path: 'lifeHook', component: LifeHookDemoComponent},
+  { path: 'mic', component: ReactiveLifeCycleHooksContainerComponent},
   { path: 'simple', component: SimpleFormComponent },
   { path: 'simple/:id', component: SimpleFormComponent },
-  { path: '**', redirectTo: 'observable' }
+  // { path: '**', redirectTo: 'observable' }
 ];
 
 @NgModule({
@@ -28,7 +31,9 @@ const routes: Routes = [
     LifeHookDemoComponent,
     SimpleFormComponent,
     ObservableFormComponent,
-    TimeComponent
+    TimeComponent,
+    ReactiveLifeCycleHooksComponent,
+    ReactiveLifeCycleHooksContainerComponent
 
   ],
   imports: [
