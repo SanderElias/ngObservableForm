@@ -6,15 +6,14 @@ import { RouterModule, Routes } from '@angular/router';
 import { AppComponent } from './app.component';
 import { FormDemoComponent } from './form-demo/form-demo.component';
 import { LifeHookDemoComponent } from './life-hook-demo/life-hook-demo.component';
+import { ObservableFormComponent } from './observable-form/observable-form.component';
 import { SeObservableFormModule } from './se-observable-form/se-observable-form.module';
 import { SimpleFormComponent } from './simple-form/simple-form.component';
-import { ObservableFormComponent } from './observable-form/observable-form.component';
-
 
 const routes: Routes = [
   { path: 'formDemo', component: FormDemoComponent },
   { path: 'observable', component: ObservableFormComponent },
-  { path: 'lifeHook', component: LifeHookDemoComponent},
+  { path: 'lifeHook', component: LifeHookDemoComponent },
   { path: 'simple', component: SimpleFormComponent },
   { path: 'simple/:id', component: SimpleFormComponent },
   { path: '**', redirectTo: 'observable' }
@@ -27,7 +26,6 @@ const routes: Routes = [
     LifeHookDemoComponent,
     SimpleFormComponent,
     ObservableFormComponent
-
   ],
   imports: [
     CommonModule,
@@ -37,7 +35,6 @@ const routes: Routes = [
     SeObservableFormModule
   ],
   providers: [],
-  bootstrap: [AppComponent],
+  bootstrap: [AppComponent]
 })
 export class AppModule {}
-
