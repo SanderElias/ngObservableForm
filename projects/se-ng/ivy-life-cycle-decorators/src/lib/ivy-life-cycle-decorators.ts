@@ -81,8 +81,13 @@ export function getHookObservable(component: any, hookName: keyof AvailableHooks
   // patch the life-cycle hook, so it fires off the subject.
   //@ts-ignore
   cdef[hookName] = function hookHandler(changes?: SimpleChanges) {
-    // schedule a micro-task to push this to the end of execution
-    Promise.resolve().then(() => hookList[hookName].next(changes));
+    if (hookIsAutoCompleting[hookName]) {
+       // schedule a micro-task to push this to the end of execution
+       Promise.resolve().then(() => hookList[hookName].next(changes));
+    } else {
+      // except for non-completing hooks.
+      hookList[hookName].next(changes);
+    }
     // tslint:disable-next-line:no-unused-expression
     orgHook && orgHook.call(component);
   }.bind(component);
