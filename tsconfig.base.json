@@ -1,0 +1,30 @@
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "baseUrl": "./",
+    "importHelpers": true,
+    "outDir": "./dist/out-tsc",
+    "sourceMap": true,
+    "declaration": false,
+    "module": "es2020",
+    "moduleResolution": "node",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "target": "es2016",
+    "typeRoots": [
+      "node_modules/@types"
+    ],
+    "lib": [
+      "es2017",
+      "dom"
+    ],
+    "paths": {
+      "@se-ng/ivy-life-cycle-decorators": [
+        "dist/se-ng/ivy-life-cycle-decorators"
+      ],
+      "@se-ng/ivy-life-cycle-decorators/*": [
+        "dist/se-ng/ivy-life-cycle-decorators/*"
+      ]
+    }
+  }
+}

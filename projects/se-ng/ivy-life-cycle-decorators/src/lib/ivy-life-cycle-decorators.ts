@@ -1,4 +1,4 @@
-import {ɵComponentDef as ComponentDef, ɵNG_COMPONENT_DEF as NG_COMPONENT_DEF, SimpleChanges} from '@angular/core';
+import {ɵComponentDef as ComponentDef, ɵNG_COMP_DEF , SimpleChanges} from '@angular/core';
 import {Observable, Subject} from 'rxjs';
 import {first, subscribeOn} from 'rxjs/operators';
 export const MONKEY_PATCH_KEY_NAME = '__ngContext__';
@@ -73,12 +73,13 @@ export function getHookObservable(component: any, hookName: keyof AvailableHooks
     return returnHook();
   }
   // get the component definition
-  const cdef: ComponentDef<any> = component.constructor[NG_COMPONENT_DEF];
+  const cdef: ComponentDef<any> = component.constructor[ɵNG_COMP_DEF];
   // keep the "original" onXXX hook
   const orgHook = cdef[hookName];
   // store the hook for future use;
   hookList[hookName] = new Subject<void>();
   // patch the life-cycle hook, so it fires off the subject.
+  //@ts-ignore
   cdef[hookName] = function hookHandler(changes?: SimpleChanges) {
     // schedule a micro-task to push this to the end of execution
     Promise.resolve().then(() => hookList[hookName].next(changes));
