@@ -1,4 +1,4 @@
-import { NgForOfContext } from '@angular/common';
+import { NgForOfContext } from "@angular/common";
 import {
   AfterContentInit,
   ContentChildren,
@@ -11,16 +11,16 @@ import {
   ViewContainerRef,
   ɵgetDirectives as getDirectives,
   ɵgetHostElement as getHostElement,
-  ViewRef
-} from '@angular/core';
-import { combineLatest, Subject } from 'rxjs';
-import { concatMap, delay, map, shareReplay, tap } from 'rxjs/operators';
-import { FillFormDirective } from './fill-form.directive';
-import { InputNameDirective } from '../input/input-name.directive';
+  ViewRef,
+} from "@angular/core";
+import { combineLatest, Subject } from "rxjs";
+import { concatMap, delay, map, shareReplay, tap } from "rxjs/operators";
+import { FillFormDirective } from "./fill-form.directive";
+import { InputNameDirective } from "../input/input-name.directive";
 
 @Directive({
   // tslint:disable-next-line:directive-selector
-  selector: '[ffArray][ffArrayFromProperty]'
+  selector: "[ffArray][ffArrayFromProperty]",
 })
 export class FillFormArrDirective<T> implements OnDestroy, AfterContentInit {
   rowData: any[];
@@ -29,21 +29,28 @@ export class FillFormArrDirective<T> implements OnDestroy, AfterContentInit {
   views = new Map<any, ViewRef>();
   inputs: InputNameDirective[];
 
-  @ContentChildren(InputNameDirective, { descendants: true }) private inputsCc: QueryList<InputNameDirective>;
+  @ContentChildren(InputNameDirective, { descendants: true })
+  private inputsCc: QueryList<InputNameDirective>;
 
   arrayData$ = combineLatest(this.ffd.formData$, this.propname$).pipe(
     // tap(p => console.log('ff', p)),
     map(([data, prop]) => [...data[prop]]),
-    tap(rowData => (this.rowData = rowData)),
-    tap(rowData =>
-      rowData.forEach(row => {
+    tap((rowData) => (this.rowData = rowData)),
+    tap((rowData) =>
+      rowData.forEach((row, index) => {
         if (!this.views.has(row)) {
           /** insert new rows */
-          this.views.set(row, this.viewContainer.createEmbeddedView(this.template, { $implicit: row }));
+          this.views.set(
+            row,
+            this.viewContainer.createEmbeddedView(
+              this.template,
+              new NgForOfContext(row, rowData, index, 1)
+            )
+          );
         }
       })
     ),
-    tap(rowData => {
+    tap((rowData) => {
       /** remove stale row */
       [...this.views.entries()].forEach(([row, currView]) => {
         if (!rowData.includes(row)) {
@@ -53,7 +60,7 @@ export class FillFormArrDirective<T> implements OnDestroy, AfterContentInit {
         }
       });
     }),
-    tap(p => console.log('ff', p)),
+    tap((p) => console.log("ff", p)),
     tap(this.findInputs),
     shareReplay(1)
   );
@@ -61,34 +68,34 @@ export class FillFormArrDirective<T> implements OnDestroy, AfterContentInit {
   inputsSub = combineLatest(this.contentInit$, this.arrayData$)
     .pipe(
       delay(1),
-      tap(() => console.log('icc', this.inputsCc)),
+      tap(() => console.log("icc", this.inputsCc)),
       map(() => {
         const inputs: InputNameDirective[] = [];
         const siblings = getHostElement(this).parentNode.children;
-        console.log('host', siblings);
+        console.log("host", siblings);
         for (const sibling of Array.from(siblings)) {
           getDirectives(sibling)
-            .filter(i => i instanceof InputNameDirective)
-            .forEach((i:InputNameDirective) => inputs.push(i));
+            .filter((i) => i instanceof InputNameDirective)
+            .forEach((i: InputNameDirective) => inputs.push(i));
         }
 
         // const inputs = getDirectives(host.parentNode)//.filter(i => i instanceof InputNameDirective);
-        console.log('inputs', inputs);
+        console.log("inputs", inputs);
         return inputs;
       }),
       // concatMap(() => this.inputsCc.changes), //.pipe(startWith(this.inputsCc.toArray()))),
       tap((inputs: any) => (this.inputs = inputs)),
-      tap(inp => console.log('ch', inp))
+      tap((inp) => console.log("ch", inp))
     )
     .subscribe();
 
   testSub = this.arrayData$.subscribe();
   // tslint:disable-next-line:no-input-rename
-  @Input('ffArrayFromProperty') set propname(x: string) {
+  @Input("ffArrayFromProperty") set propname(x: string) {
     if (x) {
       this.propname$.next(x);
     } else {
-      console.log('empty propname???');
+      console.log("empty propname???");
     }
   }
   constructor(
