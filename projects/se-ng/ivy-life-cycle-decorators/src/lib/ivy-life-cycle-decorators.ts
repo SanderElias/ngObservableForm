@@ -1,13 +1,13 @@
 import {ɵComponentDef as ComponentDef, ɵNG_COMP_DEF , SimpleChanges} from '@angular/core';
 import {Observable, Subject} from 'rxjs';
-import {first, subscribeOn} from 'rxjs/operators';
+import {take} from 'rxjs/operators';
 export const MONKEY_PATCH_KEY_NAME = '__ngContext__';
 
 const AvailableHooks = Symbol('seHooks');
 interface AvailableHooks {
   afterContentChecked: Observable<void>;
   afterContentInit: Observable<void>;
-  AfterViewChecked: Observable<void>;
+  afterViewChecked: Observable<void>;
   afterViewInit: Observable<void>;
   doCheck: Observable<void>;
   onChanges: Observable<SimpleChanges>;
@@ -18,7 +18,7 @@ interface AvailableHooks {
 const hookIsAutoCompleting: {[x in keyof AvailableHooks]: boolean} = {
   afterContentChecked: false,
   afterContentInit: true,
-  AfterViewChecked: false,
+  afterViewChecked: false,
   afterViewInit: true,
   doCheck: false,
   onChanges: false,
@@ -67,7 +67,8 @@ export function getHookObservable(component: any, hookName: keyof AvailableHooks
     });
   }
   const hookList = component[AvailableHooks] as {[P in keyof AvailableHooks]?: Subject<any>};
-  const returnHook = () =>  hookIsAutoCompleting[hookName] ? hookList[hookName].pipe(first()) : hookList[hookName].asObservable();
+  const returnHook = () =>
+    hookIsAutoCompleting[hookName] ? hookList[hookName].pipe(take(1)) : hookList[hookName].asObservable();
   if (hookList[hookName]) {
     // if the subject is already there, just return it.
     return returnHook();

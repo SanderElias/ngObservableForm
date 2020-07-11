@@ -8,6 +8,7 @@
     "build": "ng build",
     "build.lib": "ng build @se-ng/IvyLifeCycleDecorators",
     "build.ana": "ng build --prod --statsJson && webpack-bundle-analyzer ./dist/observableForm/stats.json",
+    "build.lib": "ng build @se-ng/IvyLifeCycleDecorators",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
