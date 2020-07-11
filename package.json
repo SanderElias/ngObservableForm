@@ -11,7 +11,6 @@
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "postinstall": "ivy-ngcc",
     "nix": "ng serve --port 9876 --host nix"
   },
   "private": true,
@@ -30,6 +29,7 @@
     "idb-keyval": "^3.2.0",
     "ng-packagr": "^5.3.0",
     "rxjs": "6.5.2",
+    "tsickle": "^0.39.1",
     "tslib": "^1.10.0",
     "zone.js": "~0.9.1"
   },
