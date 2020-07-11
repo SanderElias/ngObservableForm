@@ -20,7 +20,7 @@ const routes: Routes = [
   { path: "mic", component: ReactiveLifeCycleHooksContainerComponent },
   { path: "simple", component: SimpleFormComponent },
   { path: "simple/:id", component: SimpleFormComponent },
-  // { path: '**', redirectTo: 'observable' }
+  { path: '**', redirectTo: 'observable' }
 ];
 
 @NgModule({
