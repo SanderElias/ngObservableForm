@@ -148,9 +148,10 @@
               "projects/showNgModel/src/favicon.ico",
               "projects/showNgModel/src/assets"
             ],
-            "styles": ["projects/showNgModel/src/styles.css"],
-            "scripts": [],
-            "es5BrowserSupport": true
+            "styles": [
+              "projects/showNgModel/src/styles.css"
+            ],
+            "scripts": []
           },
           "configurations": {
             "production": {
@@ -247,9 +248,10 @@
               "projects/showReactiveForm/src/favicon.ico",
               "projects/showReactiveForm/src/assets"
             ],
-            "styles": ["projects/showReactiveForm/src/styles.css"],
-            "scripts": [],
-            "es5BrowserSupport": true
+            "styles": [
+              "projects/showReactiveForm/src/styles.css"
+            ],
+            "scripts": []
           },
           "configurations": {
             "production": {
