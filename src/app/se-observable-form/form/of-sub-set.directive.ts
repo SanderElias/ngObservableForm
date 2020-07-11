@@ -69,7 +69,7 @@ export class OfSubSetDirective implements OnDestroy {
     /** extract the property from the formData */
     map(([prop, data]) => data[prop]),
     /** only progress if there is actual data */
-    filter(Boolean),
+    filter(data => data!== undefined || data === null),
     /** stop if its not an "object" */
     filter(data => typeof data === 'object'),
     /** stop if it is an array */

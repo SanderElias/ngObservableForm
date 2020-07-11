@@ -24,7 +24,7 @@ import { PeopleRoot, Person } from "./PeopleRoot.interface";
   providedIn: "root",
 })
 export class SwapiService {
-  baseUrl = `https://swapi.co/api/`;
+  baseUrl = `https://swapi.dev/api/`;
   swapiRoot: SwapiRoot;
   // Get a page of people
   //   next?: any; // url of next page (if there is one)
