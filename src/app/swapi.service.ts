@@ -1,7 +1,7 @@
 // tslint:disable:member-ordering
 // import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
-import { concat, EMPTY, from, Observable, of } from 'rxjs';
+import { Injectable } from "@angular/core";
+import { concat, EMPTY, from, Observable, of } from "rxjs";
 import {
   concatMap,
   expand,
@@ -14,14 +14,14 @@ import {
   toArray,
   tap,
   concatAll,
-  observeOn
-} from 'rxjs/operators';
-import { addToCache, cacheHas, getFromCache, initCache } from '../utils/cache';
-import { Film, FilmsRoot } from './FilmsRoot.interface';
-import { PeopleRoot, Person } from './PeopleRoot.interface';
+  observeOn,
+} from "rxjs/operators";
+import { addToCache, cacheHas, getFromCache, initCache } from "../utils/cache";
+import { Film, FilmsRoot } from "./FilmsRoot.interface";
+import { PeopleRoot, Person } from "./PeopleRoot.interface";
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: "root",
 })
 export class SwapiService {
   baseUrl = `https://swapi.co/api/`;
@@ -33,8 +33,8 @@ export class SwapiService {
     await initCache();
     if (!cacheHas(url)) {
       const liveData = await fetch(url)
-        .then(r => r.json())
-        .catch(e => undefined);
+        .then((r) => r.json())
+        .catch((e) => undefined);
       await addToCache(url, liveData);
     }
 
@@ -46,7 +46,7 @@ export class SwapiService {
   swPeople$ = from(this.load<PeopleRoot>(`${this.baseUrl}people/`)).pipe(
     // expand to get additional pages
     // hint: r.next means there's another page
-    expand(r => (r.next ? this.load(r.next) : EMPTY)),
+    expand((r) => (r.next ? this.load(r.next) : EMPTY)),
 
     // for each page, extract the people (in results)
     map((r: PeopleRoot) => r.results),
@@ -57,9 +57,9 @@ export class SwapiService {
       []
     ),
 
-    map(persons =>
+    map((persons) =>
       persons.map(
-        p => ({ ...p, date: getRandomDateInPast(), id: p.url } as Person)
+        (p) => ({ ...p, date: getRandomDateInPast(), id: p.url } as Person)
       )
     ),
 
@@ -69,8 +69,8 @@ export class SwapiService {
 
   findById = (id: number): Observable<Person> =>
     this.swPeople$.pipe(
-      map(list => list[id]),
-      filter(Boolean),
+      map((list) => list[id] as Person),
+      filter((p) => p !== undefined),
       take(1)
     );
 
@@ -80,13 +80,13 @@ export class SwapiService {
 
   getAllPagedData(url): Observable<any> {
     return from(this.load(`${url}`)).pipe(
-      expand(r => (r['next'] ? this.load(r['next']) : EMPTY))
+      expand((r) => (r["next"] ? this.load(r["next"]) : EMPTY))
     );
   }
 
   findFilmByUrl = (url: string): Observable<Film> =>
     this.swFilms$.pipe(
-      map(films => films.results.find(film => film.url === url)),
+      map((films) => films.results.find((film) => film.url === url)),
       take(1)
     );
 
@@ -94,15 +94,15 @@ export class SwapiService {
     from(Array.from({ length: count })).pipe(
       concatMap(() =>
         this.swPeople$.pipe(
-          map(list => {
+          map((list) => {
             const i = Math.floor(Math.random() * list.length);
             return list[i];
           }),
           /** load in films data */
-          mergeMap(data =>
-            concat(...data.films.map(film => this.findFilmByUrl(film))).pipe(
+          mergeMap((data) =>
+            concat(...data.films.map((film) => this.findFilmByUrl(film))).pipe(
               toArray(),
-              map(films => ({ ...data, films }))
+              map((films) => ({ ...data, films }))
             )
           )
         )
@@ -118,13 +118,13 @@ export class SwapiService {
    * @param url
    */
   get<T>(url: string): Observable<T> {
-    const base = Object.values(this.swapiRoot).find(top =>
+    const base = Object.values(this.swapiRoot).find((top) =>
       url.toLowerCase().includes(url.toLowerCase())
     );
 
     if (base) {
       return this.getAllPagedData(base).pipe(
-        map((baseData: any) => baseData.results.find(row => row.url === url))
+        map((baseData: any) => baseData.results.find((row) => row.url === url))
       );
     }
     return from(this.load(url) as Promise<T>);
@@ -134,8 +134,10 @@ export class SwapiService {
   loadData() {
     from(this.load(this.baseUrl))
       .pipe(
-        tap(swapiRoot => (this.swapiRoot = this.swapiRoot)),
-        concatMap(r => Object.values(r).map(url => this.getAllPagedData(url))),
+        tap((swapiRoot) => (this.swapiRoot = this.swapiRoot)),
+        concatMap((r) =>
+          Object.values(r).map((url) => this.getAllPagedData(url))
+        ),
         concatAll(),
         toArray()
         /** log result */
@@ -146,8 +148,8 @@ export class SwapiService {
 
   findWithName = (name: string) =>
     this.swPeople$.pipe(
-      map(list =>
-        list.find(row =>
+      map((list) =>
+        list.find((row) =>
           row.name.toLowerCase().includes(name.toLowerCase().trim())
         )
       )
