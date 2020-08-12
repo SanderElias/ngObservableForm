@@ -18,7 +18,7 @@ yarn add @se-ng/ivy-life-cycle-decorators
 
 ### Result
 
-![sample](https://github.com/SanderElias/ngObservableForm/raw/master/projects/se-ng/ivy-life-cycle-decorators/img/sample.png)
+![sample](https://github.com/SanderElias/ngObservableForm/blob/main/projects/se-ng/ivy-life-cycle-decorators/img/sample.png?raw=true)
 
 ### Code
 ```typescript
