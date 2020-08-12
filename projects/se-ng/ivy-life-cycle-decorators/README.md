@@ -1,6 +1,5 @@
 # Ivy Life Cycle Decorators
 
-Beta notice: This lib is considered beta, until Ivy is the primary renderer in Angular
 A typescript decorator to be able to use Angular life-cycle hooks in an observable way. Works with Ivy only.
 
 Those life-cycle observables will make the reactive way of programming a lot easier. There is no more need to manually create an subject. For a quick before/after comparison, I added the sample in a 'before' state at the end of the document.
