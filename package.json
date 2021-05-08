@@ -28,7 +28,7 @@
     "chance": "^1.0.18",
     "core-js": "3.1.4",
     "idb-keyval": "^3.2.0",
-    "ng-packagr": "^10.0.0",
+    "ng-packagr": "^10.1.1",
     "rxjs": "6.6.0",
     "tslib": "^2.0.0",
     "zone.js": "~0.10.2"
